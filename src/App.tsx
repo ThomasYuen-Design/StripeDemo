@@ -153,7 +153,7 @@ export default function App() {
 
           {/* LAYER 3: The Central Card */}
           <motion.div
-            layout
+            layout="position"
             initial={false}
             animate={{
               boxShadow: hasClimate

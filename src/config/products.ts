@@ -10,6 +10,21 @@ import {
   Zap,
 } from 'lucide-react';
 import type { ProductConfig, PresetConfig, StageDimensions } from '@/types';
+import {
+  PaymentOutline,
+  PaymentFilled,
+  BillingOutline,
+  BillingFilled,
+  ConnectOutline,
+  ConnectFilled,
+  RadarOutline,
+  RadarFilled,
+  TerminalOutline,
+  TerminalFilled,
+  TaxOutline,
+  TaxFilled,
+  AuthorizationBoostOutline,
+} from '@/components/icons';
 
 /**
  * Stripe Products Configuration
@@ -19,6 +34,8 @@ export const PRODUCTS: ProductConfig[] = [
     id: 'payments',
     label: 'Payments',
     icon: CreditCard,
+    iconOutline: PaymentOutline,
+    iconFilled: PaymentFilled,
     color: '#635BFF',
     description: 'Accept payments online and in person'
   },
@@ -26,6 +43,8 @@ export const PRODUCTS: ProductConfig[] = [
     id: 'billing',
     label: 'Billing',
     icon: Repeat,
+    iconOutline: BillingOutline,
+    iconFilled: BillingFilled,
     color: '#00D4FF',
     description: 'Build and manage recurring revenue'
   },
@@ -33,6 +52,8 @@ export const PRODUCTS: ProductConfig[] = [
     id: 'connect',
     label: 'Connect',
     icon: Users,
+    iconOutline: ConnectOutline,
+    iconFilled: ConnectFilled,
     color: '#0048E5',
     description: 'Payments for platforms and marketplaces'
   },
@@ -40,27 +61,35 @@ export const PRODUCTS: ProductConfig[] = [
     id: 'radar',
     label: 'Radar',
     icon: ShieldCheck,
+    iconOutline: RadarOutline,
+    iconFilled: RadarFilled,
     color: '#FF424D',
     description: 'Fight fraud with machine learning'
   },
   {
-    id: 'climate',
-    label: 'Climate',
-    icon: Leaf,
-    color: '#00D924',
-    description: 'Remove carbon from the atmosphere'
+    id: 'terminal',
+    label: 'Terminal',
+    icon: CreditCard,
+    iconOutline: TerminalOutline,
+    iconFilled: TerminalFilled,
+    color: '#00D4FF',
+    description: 'Accept in-person payments'
   },
   {
-    id: 'atlas',
-    label: 'Atlas',
-    icon: Globe,
-    color: '#E8590C',
-    description: 'Incorporate your company'
+    id: 'tax',
+    label: 'Tax',
+    icon: Leaf,
+    iconOutline: TaxOutline,
+    iconFilled: TaxFilled,
+    color: '#00D924',
+    description: 'Calculate and collect sales tax'
   },
   {
     id: 'identity',
     label: 'Identity',
     icon: Fingerprint,
+    iconOutline: AuthorizationBoostOutline,
+    iconFilled: PaymentFilled,
     color: '#E31C5F',
     description: 'Confirm the identity of your users'
   },

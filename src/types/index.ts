@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
+import type { IconProps } from '@/components/icons';
 
 /**
  * Stripe Product Identifiers
@@ -10,7 +11,19 @@ export type ProductId =
   | 'connect'
   | 'climate'
   | 'atlas'
-  | 'identity';
+  | 'identity'
+  | 'terminal'
+  | 'tax'
+  | 'authorizationBoost'
+  | 'dataPipeline'
+  | 'globalPayouts'
+  | 'revenueRecognition'
+  | 'stripeSigma';
+
+/**
+ * Icon Component Type
+ */
+export type IconComponent = React.FC<IconProps>;
 
 /**
  * Product Configuration
@@ -18,7 +31,9 @@ export type ProductId =
 export interface ProductConfig {
   id: ProductId;
   label: string;
-  icon: LucideIcon;
+  icon: LucideIcon; // Legacy - keeping for backward compatibility
+  iconOutline: IconComponent;
+  iconFilled: IconComponent;
   color: string;
   description?: string;
 }
