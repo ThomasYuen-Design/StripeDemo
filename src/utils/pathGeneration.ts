@@ -24,54 +24,52 @@ export function generateOrthogonalPath(config: OrthogonalPathConfig): string {
     endX,
     endY,
     cornerRadius = 20,
-    convergenceY = 220,
-    verticalDrop = 60,
+    // convergenceY is now inflectionY
+    convergenceY = 220,  
   } = config;
 
-  // Special case: Nearly vertical line (product near center)
-  // If horizontal distance is minimal, render straight line
-  if (Math.abs(startX - endX) < 5) {
+  // Vertical straight line if X matches (center item)
+  if (Math.abs(startX - endX) < 1) {
     return `M ${startX} ${startY} L ${endX} ${endY}`;
   }
 
-  // Determine direction (left side or right side of center)
+  // Determine direction
   const isLeftSide = startX < endX;
   const direction = isLeftSide ? 1 : -1;
+  
+  // The horizontal segment Y-level
+  // Use convergenceY as the center of the horizontal segment
+  const horizontalY = convergenceY;
 
-  // Key Y coordinates
-  const corner1Y = startY + verticalDrop; // First corner after initial drop
-  const corner2Y = convergenceY; // Convergence plane where all lines meet
+  // Calculate key points
+  const startDropY = horizontalY - cornerRadius;
+  const endDropY = horizontalY + cornerRadius;
+  
+  // Start Point
+  const p1 = `${startX} ${startY}`;
+  
+  // First Corner Start
+  const p2 = `${startX} ${startDropY}`;
+  
+  // First Corner Control & End
+  const c1 = `${startX} ${horizontalY}`;
+  const p3 = `${startX + (direction * cornerRadius)} ${horizontalY}`;
+  
+  // Second Corner Start
+  const p4 = `${endX - (direction * cornerRadius)} ${horizontalY}`;
+  
+  // Second Corner Control & End
+  const c2 = `${endX} ${horizontalY}`;
+  const p5 = `${endX} ${endDropY}`;
+  
+  // End Point
+  const p6 = `${endX} ${endY}`;
 
-  // Key X coordinates
-  const corner1X = startX;
-  const corner2X = endX;
-
-  // Build SVG path with quadratic curves for rounded corners
-  const pathSegments = [
-    // Start point
-    `M ${startX} ${startY}`,
-
-    // Segment 1: Vertical drop from product
-    `L ${corner1X} ${corner1Y - cornerRadius}`,
-
-    // Corner 1: Turn toward center (vertical → horizontal)
-    // Q creates a quadratic Bezier curve with one control point
-    // Control point is at the apex (corner1X, corner1Y)
-    // End point is offset by cornerRadius in the new direction
-    `Q ${corner1X} ${corner1Y}, ${corner1X + direction * cornerRadius} ${corner1Y}`,
-
-    // Segment 2: Horizontal movement toward center convergence point
-    `L ${corner2X - direction * cornerRadius} ${corner2Y}`,
-
-    // Corner 2: Turn downward (horizontal → vertical)
-    // Control point at (corner2X, corner2Y)
-    // End point offset by cornerRadius downward
-    `Q ${corner2X} ${corner2Y}, ${corner2X} ${corner2Y + cornerRadius}`,
-
-    // Segment 3: Final vertical descent to card
-    `L ${endX} ${endY}`,
-  ];
-
-  // Join segments with spaces for clean SVG path
-  return pathSegments.join(' ');
+  // Construct Path
+  return `M ${p1} 
+          L ${p2} 
+          Q ${c1} ${p3} 
+          L ${p4} 
+          Q ${c2} ${p5} 
+          L ${p6}`;
 }

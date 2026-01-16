@@ -107,31 +107,6 @@ export default function App() {
             className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible"
           >
             <defs>
-              {/* SVG Filters for Glow Effects */}
-              <filter
-                id="glow-blur"
-                x="-50%"
-                y="-50%"
-                width="200%"
-                height="200%"
-              >
-                <feGaussianBlur stdDeviation="6" />
-              </filter>
-
-              <filter id="pulse-glow">
-                <feGaussianBlur
-                  in="SourceGraphic"
-                  stdDeviation="4"
-                  result="blur"
-                />
-                <feFlood floodColor="currentColor" result="color" />
-                <feComposite in="color" in2="blur" operator="in" result="glow" />
-                <feMerge>
-                  <feMergeNode in="glow" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-
               {/* Linear Gradients - One per active product */}
               {activeProducts.map((id) => {
                 const product = PRODUCTS.find((p) => p.id === id);
@@ -139,6 +114,14 @@ export default function App() {
 
                 const index = PRODUCTS.findIndex((p) => p.id === id);
                 const pos = getIconPosition(index);
+                
+                // Distribute endpoints along the top of the card
+                // Card is centered at STAGE.cardCenterX
+                // Spread connection points over 600px (fitting within the 840px card width)
+                const connectionWidth = 600;
+                const connectionStep = connectionWidth / (PRODUCTS.length - 1);
+                const connectionStartX = STAGE.cardCenterX - (connectionWidth / 2);
+                const targetX = connectionStartX + (index * connectionStep);
 
                 return (
                   <linearGradient
@@ -147,7 +130,7 @@ export default function App() {
                     gradientUnits="userSpaceOnUse"
                     x1={pos.x}
                     y1={pos.y + 35}
-                    x2={STAGE.cardCenterX}
+                    x2={targetX}
                     y2={STAGE.cardTopY}
                   >
                     <stop offset="0%" stopColor={product.color} />
@@ -173,16 +156,36 @@ export default function App() {
 
                 const index = PRODUCTS.findIndex((p) => p.id === id);
                 const pos = getIconPosition(index);
+                
+                // Recalculate targetX here as well (could be refactored to helper)
+                const connectionWidth = 600;
+                const connectionStep = connectionWidth / (PRODUCTS.length - 1);
+                const connectionStartX = STAGE.cardCenterX - (connectionWidth / 2);
+                const targetX = connectionStartX + (index * connectionStep);
 
-                // Generate orthogonal path with rounded corners
+                // Calculate inflection Y (vertical drop depth)
+                // We want outer items to drop further down (larger Y)
+                // Inner items should drop less (smaller Y)
+                
+                const centerIndex = (PRODUCTS.length - 1) / 2;
+                const distFromCenter = Math.abs(index - centerIndex);
+                
+                // Base drop from the icon row
+                const baseDrop = 50; 
+                // Additional drop per unit of distance from center
+                const dropStep = 15;
+                
+                // Outer items get more drop
+                const inflectionY = (pos.y + 35) + baseDrop + (distFromCenter * dropStep);
+
+                // Generate orthogonal path with distributed endpoints
                 const d = generateOrthogonalPath({
                   startX: pos.x,
                   startY: pos.y + 35,
-                  endX: STAGE.cardCenterX,
+                  endX: targetX,
                   endY: STAGE.cardTopY,
                   cornerRadius: 20,
-                  convergenceY: 220,
-                  verticalDrop: 60,
+                  convergenceY: inflectionY,
                 });
 
                 return (
@@ -194,7 +197,6 @@ export default function App() {
                   >
                     <GradientPath
                       d={d}
-                      color={product.color}
                       gradientId={`gradient-${id}`}
                     />
                   </motion.g>
