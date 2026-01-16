@@ -71,3 +71,16 @@ export interface Position {
   x: number;
   y: number;
 }
+
+/**
+ * Configuration for orthogonal (Manhattan-style) path generation
+ */
+export interface OrthogonalPathConfig {
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+  cornerRadius?: number;
+  convergenceY?: number;
+  verticalDrop?: number;
+}

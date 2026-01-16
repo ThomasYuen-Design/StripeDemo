@@ -7,6 +7,7 @@ import { GraphVisualizer } from '@/components/slots/GraphVisualizer';
 import { MetricSlot } from '@/components/slots/MetricSlot';
 import { FooterSlot } from '@/components/slots/FooterSlot';
 import { PRODUCTS, PRESETS, STAGE, getIconPosition } from '@/config/products';
+import { generateOrthogonalPath } from '@/utils/pathGeneration';
 import type { ProductId, PresetType } from '@/types';
 
 export default function App() {
@@ -97,14 +98,74 @@ export default function App() {
 
         {/* THE UNIFIED STAGE */}
         <div
-          className="relative w-full max-w-[1000px] mx-auto"
+          className="relative w-full max-w-[1400px] mx-auto"
           style={{ aspectRatio: `${STAGE.width}/${STAGE.height}` }}
         >
-          {/* LAYER 1: The SVG Connection Grid */}
+          {/* LAYER 1: The SVG Connection Grid with Orthogonal Routing */}
           <svg
             viewBox={`0 0 ${STAGE.width} ${STAGE.height}`}
             className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible"
           >
+            <defs>
+              {/* SVG Filters for Glow Effects */}
+              <filter
+                id="glow-blur"
+                x="-50%"
+                y="-50%"
+                width="200%"
+                height="200%"
+              >
+                <feGaussianBlur stdDeviation="6" />
+              </filter>
+
+              <filter id="pulse-glow">
+                <feGaussianBlur
+                  in="SourceGraphic"
+                  stdDeviation="4"
+                  result="blur"
+                />
+                <feFlood floodColor="currentColor" result="color" />
+                <feComposite in="color" in2="blur" operator="in" result="glow" />
+                <feMerge>
+                  <feMergeNode in="glow" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+
+              {/* Linear Gradients - One per active product */}
+              {activeProducts.map((id) => {
+                const product = PRODUCTS.find((p) => p.id === id);
+                if (!product) return null;
+
+                const index = PRODUCTS.findIndex((p) => p.id === id);
+                const pos = getIconPosition(index);
+
+                return (
+                  <linearGradient
+                    key={`gradient-${id}`}
+                    id={`gradient-${id}`}
+                    gradientUnits="userSpaceOnUse"
+                    x1={pos.x}
+                    y1={pos.y + 35}
+                    x2={STAGE.cardCenterX}
+                    y2={STAGE.cardTopY}
+                  >
+                    <stop offset="0%" stopColor={product.color} />
+                    <stop
+                      offset="70%"
+                      stopColor={product.color}
+                      stopOpacity="0.8"
+                    />
+                    <stop
+                      offset="100%"
+                      stopColor="#635BFF"
+                      stopOpacity="0.6"
+                    />
+                  </linearGradient>
+                );
+              })}
+            </defs>
+
             <AnimatePresence>
               {activeProducts.map((id) => {
                 const product = PRODUCTS.find((p) => p.id === id);
@@ -112,15 +173,17 @@ export default function App() {
 
                 const index = PRODUCTS.findIndex((p) => p.id === id);
                 const pos = getIconPosition(index);
-                const startX = pos.x;
-                const startY = pos.y + 35;
 
-                const endX = STAGE.cardCenterX;
-                const endY = STAGE.cardTopY;
-
-                const controlY1 = startY + (endY - startY) * 0.5;
-                const controlY2 = endY - (endY - startY) * 0.2;
-                const d = `M ${startX} ${startY} C ${startX} ${controlY1}, ${endX} ${controlY2}, ${endX} ${endY}`;
+                // Generate orthogonal path with rounded corners
+                const d = generateOrthogonalPath({
+                  startX: pos.x,
+                  startY: pos.y + 35,
+                  endX: STAGE.cardCenterX,
+                  endY: STAGE.cardTopY,
+                  cornerRadius: 20,
+                  convergenceY: 220,
+                  verticalDrop: 60,
+                });
 
                 return (
                   <motion.g
@@ -129,7 +192,11 @@ export default function App() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <GradientPath d={d} color={product.color} />
+                    <GradientPath
+                      d={d}
+                      color={product.color}
+                      gradientId={`gradient-${id}`}
+                    />
                   </motion.g>
                 );
               })}

@@ -24,6 +24,15 @@ import {
   TaxOutline,
   TaxFilled,
   AuthorizationBoostOutline,
+  AuthorizationBoostFilled,
+  GlobalPayoutsOutline,
+  GlobalPayoutsFilled,
+  RevenueRecognitionOutline,
+  RevenueRecognitionFilled,
+  StripeSigmaOutline,
+  StripeSigmaFilled,
+  DataPipelineOutline,
+  DataPipelineFilled,
 } from '@/components/icons';
 
 /**
@@ -40,22 +49,13 @@ export const PRODUCTS: ProductConfig[] = [
     description: 'Accept payments online and in person'
   },
   {
-    id: 'billing',
-    label: 'Billing',
-    icon: Repeat,
-    iconOutline: BillingOutline,
-    iconFilled: BillingFilled,
+    id: 'terminal',
+    label: 'Terminal',
+    icon: CreditCard,
+    iconOutline: TerminalOutline,
+    iconFilled: TerminalFilled,
     color: '#00D4FF',
-    description: 'Build and manage recurring revenue'
-  },
-  {
-    id: 'connect',
-    label: 'Connect',
-    icon: Users,
-    iconOutline: ConnectOutline,
-    iconFilled: ConnectFilled,
-    color: '#0048E5',
-    description: 'Payments for platforms and marketplaces'
+    description: 'Accept in-person payments'
   },
   {
     id: 'radar',
@@ -67,13 +67,40 @@ export const PRODUCTS: ProductConfig[] = [
     description: 'Fight fraud with machine learning'
   },
   {
-    id: 'terminal',
-    label: 'Terminal',
-    icon: CreditCard,
-    iconOutline: TerminalOutline,
-    iconFilled: TerminalFilled,
+    id: 'authorizationBoost',
+    label: 'Authorization Boost',
+    icon: Fingerprint, // Using Fingerprint as a reasonable placeholder for Auth/Identity
+    iconOutline: AuthorizationBoostOutline,
+    iconFilled: AuthorizationBoostFilled,
+    color: '#E31C5F', // Based on SVG gradient
+    description: 'Smarter authorization decisions'
+  },
+  {
+    id: 'connect',
+    label: 'Connect',
+    icon: Users,
+    iconOutline: ConnectOutline,
+    iconFilled: ConnectFilled,
+    color: '#0048E5',
+    description: 'Payments for platforms and marketplaces'
+  },
+  {
+    id: 'globalPayouts',
+    label: 'Global Payouts',
+    icon: Globe,
+    iconOutline: GlobalPayoutsOutline,
+    iconFilled: GlobalPayoutsFilled,
+    color: '#E03071', // Based on SVG gradient
+    description: 'Send payouts globally'
+  },
+  {
+    id: 'billing',
+    label: 'Billing',
+    icon: Repeat,
+    iconOutline: BillingOutline,
+    iconFilled: BillingFilled,
     color: '#00D4FF',
-    description: 'Accept in-person payments'
+    description: 'Build and manage recurring revenue'
   },
   {
     id: 'tax',
@@ -85,13 +112,31 @@ export const PRODUCTS: ProductConfig[] = [
     description: 'Calculate and collect sales tax'
   },
   {
-    id: 'identity',
-    label: 'Identity',
-    icon: Fingerprint,
-    iconOutline: AuthorizationBoostOutline,
-    iconFilled: PaymentFilled,
-    color: '#E31C5F',
-    description: 'Confirm the identity of your users'
+    id: 'revenueRecognition',
+    label: 'Revenue Recognition',
+    icon: Activity,
+    iconOutline: RevenueRecognitionOutline,
+    iconFilled: RevenueRecognitionFilled,
+    color: '#E03071', // Based on SVG gradient
+    description: 'Simplify revenue reporting'
+  },
+  {
+    id: 'stripeSigma',
+    label: 'Stripe Sigma',
+    icon: Activity, // Using Activity as placeholder
+    iconOutline: StripeSigmaOutline,
+    iconFilled: StripeSigmaFilled,
+    color: '#9860FE', // Based on SVG gradient
+    description: 'Custom reporting and insights'
+  },
+  {
+    id: 'dataPipeline',
+    label: 'Data Pipeline',
+    icon: Zap, // Using Zap as placeholder
+    iconOutline: DataPipelineOutline,
+    iconFilled: DataPipelineFilled,
+    color: '#E03071', // Based on SVG gradient
+    description: 'Sync Stripe data to your warehouse'
   },
 ];
 
@@ -123,18 +168,18 @@ export const PRESETS: PresetConfig[] = [
  * Stage dimensions for the unified coordinate system
  */
 export const STAGE: StageDimensions = {
-  width: 1000,
+  width: 1400,
   height: 800,
   iconY: 100,
   cardTopY: 320,
-  cardCenterX: 500,
+  cardCenterX: 700,
 };
 
 /**
  * Calculate icon position on the stage grid
  */
 export const getIconPosition = (index: number): { x: number; y: number } => {
-  const totalWidth = 800;
+  const totalWidth = 1200;
   const startX = (STAGE.width - totalWidth) / 2;
   const step = totalWidth / (PRODUCTS.length - 1);
 

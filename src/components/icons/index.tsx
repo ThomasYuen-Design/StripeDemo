@@ -199,11 +199,47 @@ export const AuthorizationBoostOutline: React.FC<IconProps> = ({ size = 40, clas
   </svg>
 );
 
+export const AuthorizationBoostFilled: React.FC<IconProps> = ({ size = 40, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M5 35V6.99997C4.99959 6.3584 5.20486 5.7336 5.58569 5.21729C5.96651 4.70097 6.50283 4.32034 7.1159 4.13128C7.72898 3.94221 8.38652 3.95466 8.992 4.1668C9.59748 4.37895 10.119 4.77961 10.48 5.30997L21.2 21L9.32 38H8C7.20435 38 6.44129 37.6839 5.87868 37.1213C5.31607 36.5587 5 35.7956 5 35Z" fill="url(#paint0_linear_auth_boost)"/>
+    <path d="M8.06003 4.00001H33.22C33.51 4.00175 33.7932 4.08748 34.0354 4.24684C34.2777 4.40619 34.4685 4.63233 34.5849 4.8979C34.7013 5.16346 34.7382 5.45707 34.6912 5.74318C34.6442 6.02929 34.5153 6.29565 34.32 6.51001L21.15 21L5.84003 4.92001C6.12552 4.62318 6.46907 4.38831 6.84929 4.23003C7.2295 4.07175 7.63823 3.99345 8.05003 4.00001H8.06003Z" fill="url(#paint1_linear_auth_boost)"/>
+    <path d="M7.88003 38H33.2C33.4908 38.0002 33.7754 37.9159 34.0191 37.7573C34.2629 37.5986 34.4552 37.3726 34.5729 37.1067C34.6905 36.8407 34.7282 36.5463 34.6816 36.2593C34.6349 35.9723 34.5058 35.705 34.31 35.49L21.11 21L7.14003 36.33C7.01057 36.4734 6.92544 36.6513 6.89493 36.8421C6.86442 37.0329 6.88984 37.2285 6.96812 37.4051C7.0464 37.5818 7.17418 37.732 7.33602 37.8375C7.49785 37.9431 7.6868 37.9995 7.88003 38Z" fill="#9A66FF"/>
+    <defs>
+      <linearGradient id="paint0_linear_auth_boost" x1="13.1" y1="38" x2="13.1" y2="12.99" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#9860FE"/>
+        <stop offset="1" stopColor="#6E00F5"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_auth_boost" x1="20.28" y1="8.42001" x2="20.28" y2="19.47" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FF5091"/>
+        <stop offset="1" stopColor="#E03071"/>
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
 // Additional placeholders for other products
 export const DataPipelineOutline: React.FC<IconProps> = ({ size = 40, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
     <path d="M11.5319 14.4526H12.2418V23.6274C12.2419 24.4016 12.5499 25.1445 13.0973 25.6919C13.6447 26.2391 14.3877 26.5464 15.1617 26.5464H26.7584V34.5151C26.7583 35.5744 25.8978 36.4341 24.8385 36.4341H11.5328C5.79172 36.4341 1.14528 31.3426 1.14514 25.4429C1.14514 19.5431 5.7919 14.4526 11.5319 14.4526Z" stroke="currentColor"/>
     <path d="M15.1609 3.56458H28.4685C34.2082 3.56464 38.855 8.6561 38.8552 14.5558C38.8552 20.4567 34.2086 25.5477 28.4675 25.548H27.7585V16.3702C27.7585 14.7583 26.4499 13.4523 24.8386 13.4523H13.2419V5.48352C13.2422 4.42339 14.1017 3.5648 15.1609 3.56458Z" stroke="currentColor"/>
+  </svg>
+);
+
+export const DataPipelineFilled: React.FC<IconProps> = ({ size = 40, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M12.7419 13.9523H11.5316C5.48385 13.9523 0.645142 19.2994 0.645142 25.4426C0.645142 31.5858 5.48385 36.9342 11.5329 36.9342H24.8387C26.1742 36.9342 27.258 35.8504 27.258 34.5149V26.0465H15.1613C14.5196 26.0465 13.9042 25.7916 13.4505 25.3379C12.9968 24.8842 12.7419 24.2688 12.7419 23.6271V13.9497V13.9523Z" fill="url(#paint0_linear_data_pipeline)"/>
+    <path d="M27.2581 16.3716C27.2581 15.0348 26.1742 13.9509 24.8387 13.9509H12.7419V23.6283C12.7419 24.9651 13.8258 26.0477 15.1613 26.0477H27.2581V16.3716Z" fill="url(#paint1_linear_data_pipeline)"/>
+    <path d="M12.7419 5.48393C12.7419 4.14716 13.8258 3.06458 15.1613 3.06458H28.4684C34.5161 3.06458 39.3548 8.41296 39.3548 14.5562C39.3548 20.7007 34.5161 26.0478 28.4671 26.0478H27.2581V16.3704C27.2581 15.0349 26.1742 13.9523 24.8387 13.9523H12.7419V5.48393Z" fill="#9A66FF"/>
+    <defs>
+      <linearGradient id="paint0_linear_data_pipeline" x1="12.7419" y1="15.1613" x2="6.93546" y2="37.4194" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#E03071"/>
+        <stop offset="1" stopColor="#FF5091"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_data_pipeline" x1="16.6129" y1="25.8064" x2="20.1007" y2="11.6851" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#9860FE"/>
+        <stop offset="1" stopColor="#6E00F5"/>
+      </linearGradient>
+    </defs>
   </svg>
 );
 
@@ -214,10 +250,46 @@ export const GlobalPayoutsOutline: React.FC<IconProps> = ({ size = 42, className
   </svg>
 );
 
+export const GlobalPayoutsFilled: React.FC<IconProps> = ({ size = 40, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M12.7419 13.9523H11.5316C5.48385 13.9523 0.645142 19.2994 0.645142 25.4426C0.645142 31.5858 5.48385 36.9342 11.5329 36.9342H24.8387C26.1742 36.9342 27.258 35.8504 27.258 34.5149V26.0465H15.1613C14.5196 26.0465 13.9042 25.7916 13.4505 25.3379C12.9968 24.8842 12.7419 24.2688 12.7419 23.6271V13.9497V13.9523Z" fill="url(#paint0_linear_global_payout)"/>
+    <path d="M27.2581 16.3716C27.2581 15.0348 26.1742 13.9509 24.8387 13.9509H12.7419V23.6283C12.7419 24.9651 13.8258 26.0477 15.1613 26.0477H27.2581V16.3716Z" fill="url(#paint1_linear_global_payout)"/>
+    <path d="M12.7419 5.48393C12.7419 4.14716 13.8258 3.06458 15.1613 3.06458H28.4684C34.5161 3.06458 39.3548 8.41296 39.3548 14.5562C39.3548 20.7007 34.5161 26.0478 28.4671 26.0478H27.2581V16.3704C27.2581 15.0349 26.1742 13.9523 24.8387 13.9523H12.7419V5.48393Z" fill="#9A66FF"/>
+    <defs>
+      <linearGradient id="paint0_linear_global_payout" x1="12.7419" y1="15.1613" x2="6.93546" y2="37.4194" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#E03071"/>
+        <stop offset="1" stopColor="#FF5091"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_global_payout" x1="16.6129" y1="25.8064" x2="20.1007" y2="11.6851" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#9860FE"/>
+        <stop offset="1" stopColor="#6E00F5"/>
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
 export const RevenueRecognitionOutline: React.FC<IconProps> = ({ size = 42, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
     <path d="M25.4511 9.12634H34.7606C35.3905 9.12634 35.9946 9.37656 36.4399 9.82193C36.8853 10.2673 37.1355 10.8713 37.1355 11.5012V37.625C37.1355 38.2549 36.8853 38.8589 36.4399 39.3043C35.9946 39.7497 35.3905 39.9999 34.7606 39.9999H13.3866C12.7567 39.9999 12.1527 39.7497 11.7073 39.3043C11.2619 38.8589 11.0117 38.2549 11.0117 37.625V23.5538L25.4511 9.12634Z" stroke="currentColor"/>
     <path d="M25.052 3.05463C25.3137 3.44589 25.4532 3.90609 25.4528 4.37679V9.12657L25.4511 9.12834V21.179C25.4511 21.8088 25.2008 22.4129 24.7555 22.8583C24.3101 23.3037 23.706 23.5539 23.0762 23.5539L6.2637 23.554C5.79199 23.5568 5.33015 23.419 4.93706 23.1582C4.54397 22.8975 4.23744 22.5255 4.05655 22.0899C3.87566 21.6542 3.82861 21.1746 3.9214 20.712C4.01418 20.2495 4.2426 19.8251 4.57753 19.493L21.3918 2.70249C21.7232 2.36829 22.1465 2.14013 22.6079 2.04698C23.0693 1.95382 23.548 1.99987 23.9831 2.17928C24.4183 2.35869 24.7903 2.66337 25.052 3.05463Z" stroke="currentColor"/>
+  </svg>
+);
+
+export const RevenueRecognitionFilled: React.FC<IconProps> = ({ size = 40, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M24.4531 3.37679C24.4535 2.90609 24.314 2.44589 24.0523 2.05463C23.7907 1.66337 23.4186 1.35869 22.9834 1.17928C22.5483 0.999871 22.0696 0.953818 21.6082 1.04698C21.1468 1.14013 20.7235 1.36829 20.3921 1.70249L3.57784 18.493C3.24291 18.8251 3.01449 19.2495 2.9217 19.712C2.82892 20.1746 2.87597 20.6542 3.05685 21.0899C3.23774 21.5255 3.54427 21.8975 3.93736 22.1582C4.33045 22.419 4.7923 22.5568 5.26401 22.554H10.0138L24.4531 8.12657V3.37679Z" fill="url(#paint0_linear_rev_rec)"/>
+    <path d="M33.7627 8.12634H24.4531V20.1789C24.4531 20.8088 24.2029 21.4128 23.7575 21.8582C23.3122 22.3036 22.7081 22.5538 22.0782 22.5538H10.0138V36.625C10.0138 37.2549 10.264 37.859 10.7094 38.3043C11.1548 38.7497 11.7588 38.9999 12.3887 38.9999H33.7627C34.3926 38.9999 34.9966 38.7497 35.442 38.3043C35.8874 37.859 36.1376 37.2549 36.1376 36.625V10.5012C36.1376 9.87137 35.8874 9.26731 35.442 8.82193C34.9966 8.37655 34.3926 8.12634 33.7627 8.12634Z" fill="#9A66FF"/>
+    <path d="M24.4531 20.1789V8.12634L10.0138 22.5538H22.0782C22.7081 22.5538 23.3122 22.3036 23.7575 21.8582C24.2029 21.4128 24.4531 20.8088 24.4531 20.1789Z" fill="url(#paint1_linear_rev_rec)"/>
+    <defs>
+      <linearGradient id="paint0_linear_rev_rec" x1="13.7647" y1="0.999999" x2="13.7647" y2="22.3532" gradientUnits="userSpaceOnUse">
+        <stop offset="0.270725" stopColor="#FF5091"/>
+        <stop offset="1" stopColor="#E03071"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_rev_rec" x1="16.0302" y1="22.3652" x2="24.2719" y2="6.84356" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#6E00F5"/>
+        <stop offset="1" stopColor="#9860FE"/>
+      </linearGradient>
+    </defs>
   </svg>
 );
 
@@ -226,5 +298,27 @@ export const StripeSigmaOutline: React.FC<IconProps> = ({ size = 42, className =
     <path d="M9.05438 5H34.216C35.0444 5 35.716 5.67157 35.716 6.5C35.716 6.87346 35.5767 7.23348 35.3253 7.50967L22.1365 22L6.83984 5.92048C7.11404 5.63767 7.43005 5.41355 7.78786 5.24813C8.14567 5.08271 8.56785 5 9.05438 5Z" stroke="currentColor"/>
     <path d="M6 8.00452C6 7.19547 6.32026 6.46122 6.84093 5.92163L22.1365 22L22.1175 22.0246L22.14 22L35.3209 36.4894C35.5728 36.7657 35.7124 37.1261 35.7124 37.5C35.7124 38.3284 35.0409 39 34.2124 39H9C7.34315 39 6 37.6569 6 36V8.00452Z" stroke="currentColor"/>
     <path d="M8.87501 39H34.2124C35.0409 39 35.7124 38.3284 35.7124 37.5C35.7124 37.1261 35.5728 36.7657 35.3209 36.4894L22.11 22L8.13605 37.3262C7.76395 37.7344 7.79314 38.3669 8.20125 38.739C8.38545 38.9069 8.62574 39 8.87501 39Z" stroke="currentColor"/>
+  </svg>
+);
+
+export const StripeSigmaFilled: React.FC<IconProps> = ({ size = 40, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M12.9813 14.8623L13.1166 14.6713L13.0658 14.9048L12.9813 14.8623ZM7.84852 5.00015L35.2515 5.00018C35.7954 5.00018 36.2363 5.30907 36.4253 5.81735C36.6143 6.32562 36.5029 6.90325 36.1311 7.34293L22.9772 22.0298L7.00904 5.92884C7.15286 5.61907 7.46452 5.28945 7.84852 5.00015Z" fill="url(#paint0_linear_sigma)"/>
+    <path d="M5 7.95483C5 7.07346 5.34887 6.27351 5.91605 5.68567L22.9772 22.0298L22.9772 22.03L22.9772 22.0299L36.1609 37.2842C36.3934 37.5501 36.5222 37.8967 36.5222 38.2562C36.5222 39.0529 35.7906 39.6987 34.8881 39.6987H8.26781C6.46313 39.6987 5 38.3072 5 36.591V7.95483Z" fill="url(#paint1_linear_sigma)"/>
+    <path d="M8.13165 39.6987H34.8881C35.7906 39.6987 36.5222 39.0529 36.5222 38.2562C36.5222 37.8967 36.3934 37.5501 36.1609 37.2843L22.9772 22.0299L7.33148 37.8105C6.91893 38.2263 6.94639 38.8778 7.39824 39.2612C7.59966 39.4322 7.86016 39.5273 8.13165 39.6987Z" fill="url(#paint2_linear_sigma)"/>
+    <defs>
+      <linearGradient id="paint0_linear_sigma" x1="16.3" y1="21.57" x2="31.39" y2="4.10001" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#9860FE"/>
+        <stop offset="1" stopColor="#6E00F5"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_sigma" x1="20.76" y1="5.00001" x2="20.76" y2="39.7" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FFD748"/>
+        <stop offset="1" stopColor="#FFC148"/>
+      </linearGradient>
+      <linearGradient id="paint2_linear_sigma" x1="29.5" y1="31" x2="16.5" y2="22" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FF5091"/>
+        <stop offset="1" stopColor="#E03071"/>
+      </linearGradient>
+    </defs>
   </svg>
 );
