@@ -6,6 +6,7 @@ import { GradientPath } from '@/components/GradientPath';
 import { GraphVisualizer } from '@/components/slots/GraphVisualizer';
 import { MetricSlot } from '@/components/slots/MetricSlot';
 import { FooterSlot } from '@/components/slots/FooterSlot';
+import { PaymentSimulation } from '@/components/PaymentSimulation';
 import { PRODUCTS, PRESETS, STAGE, getIconPosition } from '@/config/products';
 import { generateOrthogonalPath } from '@/utils/pathGeneration';
 import type { ProductId, PresetType } from '@/types';
@@ -118,7 +119,7 @@ export default function App() {
                 // Distribute endpoints along the top of the card
                 // Card is centered at STAGE.cardCenterX
                 // Spread connection points over 600px (fitting within the 840px card width)
-                const connectionWidth = 600;
+                const connectionWidth = 440;
                 const connectionStep = connectionWidth / (PRODUCTS.length - 1);
                 const connectionStartX = STAGE.cardCenterX - (connectionWidth / 2);
                 const targetX = connectionStartX + (index * connectionStep);
@@ -158,7 +159,7 @@ export default function App() {
                 const pos = getIconPosition(index);
                 
                 // Recalculate targetX here as well (could be refactored to helper)
-                const connectionWidth = 600;
+                const connectionWidth = 440;
                 const connectionStep = connectionWidth / (PRODUCTS.length - 1);
                 const connectionStartX = STAGE.cardCenterX - (connectionWidth / 2);
                 const targetX = connectionStartX + (index * connectionStep);
@@ -220,6 +221,9 @@ export default function App() {
             );
           })}
 
+          {/* Payment Simulation Layer */}
+          <PaymentSimulation isActive={activeProducts.includes('payments')} />
+
           {/* LAYER 3: The Central Card */}
           <motion.div
             layout="position"
@@ -235,7 +239,7 @@ export default function App() {
                 : 'rgba(226, 232, 240, 1)',
             }}
             className={`
-              absolute z-20 w-[90%] md:w-[60%] bg-white rounded-3xl border border-slate-200 overflow-hidden flex flex-col
+              absolute z-20 w-[90%] md:w-[600px] bg-white rounded-3xl border border-slate-200 overflow-hidden flex flex-col
               transition-colors duration-500
               ${hasClimate ? 'bg-gradient-to-br from-green-50 to-white' : ''}
             `}

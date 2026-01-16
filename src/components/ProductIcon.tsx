@@ -44,7 +44,7 @@ export const ProductIcon = ({
       >
         {/* Button container with fixed size and background */}
         <motion.div
-          className="relative w-20 h-20 md:w-24 md:h-24 rounded-2xl flex flex-col items-center justify-center border border-slate-200"
+          className="relative w-16 h-16 rounded-xl flex flex-col items-center justify-center border border-slate-200"
           animate={{
             backgroundColor: showFilled ? '#ffffff' : 'transparent',
             boxShadow: showFilled
@@ -57,7 +57,7 @@ export const ProductIcon = ({
           <motion.div
             className="relative flex items-center justify-center"
             animate={{
-              y: showFilled ? -8 : 0,
+              y: showFilled ? -6 : 0,
             }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
           >
@@ -70,7 +70,7 @@ export const ProductIcon = ({
               }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
             >
-              <OutlineIcon size={36} />
+              <OutlineIcon size={28} />
             </motion.div>
 
             {/* Filled Icon */}
@@ -83,7 +83,7 @@ export const ProductIcon = ({
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3, ease: 'easeOut' }}
                 >
-                  <FilledIcon size={36} />
+                  <FilledIcon size={28} />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -93,13 +93,13 @@ export const ProductIcon = ({
           <AnimatePresence>
             {showFilled && (
               <motion.div
-                className="absolute bottom-3 flex items-center justify-center"
+                className="absolute bottom-2 flex items-center justify-center"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 8 }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
               >
-                <span className="text-xs font-semibold text-slate-900">
+                <span className="text-[10px] font-semibold text-slate-900">
                   {product.label}
                 </span>
               </motion.div>
