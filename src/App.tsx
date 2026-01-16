@@ -6,7 +6,7 @@ import { GradientPath } from '@/components/GradientPath';
 import { GraphVisualizer } from '@/components/slots/GraphVisualizer';
 import { MetricSlot } from '@/components/slots/MetricSlot';
 import { FooterSlot } from '@/components/slots/FooterSlot';
-import { PaymentSimulation } from '@/components/PaymentSimulation';
+import { DeviceSimulationLayer } from '@/components/DeviceSimulationLayer';
 import { PRODUCTS, PRESETS, STAGE, getIconPosition } from '@/config/products';
 import { generateOrthogonalPath } from '@/utils/pathGeneration';
 import type { ProductId, PresetType } from '@/types';
@@ -19,6 +19,12 @@ export default function App() {
     setActiveProducts((prev) => {
       const isIncludes = prev.includes(id);
       if (isIncludes) return prev.filter((p) => p !== id);
+      
+      // Logic: Terminal requires Payments
+      if (id === 'terminal' && !prev.includes('payments')) {
+        return [...prev, id, 'payments'];
+      }
+      
       return [...prev, id];
     });
   };
@@ -221,8 +227,8 @@ export default function App() {
             );
           })}
 
-          {/* Payment Simulation Layer */}
-          <PaymentSimulation isActive={activeProducts.includes('payments')} />
+          {/* Device Simulation Layer (Phone & Terminal) */}
+          <DeviceSimulationLayer activeProducts={activeProducts} />
 
           {/* LAYER 3: The Central Card */}
           <motion.div
