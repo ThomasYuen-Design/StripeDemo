@@ -8,8 +8,6 @@ import { ProductId } from '@/types';
 
 // Animation Constants
 const CYCLE_DURATION = 3.5; // Total time for one complete loop + pause
-const SWEEP_DURATION = 2;   // Time for the comet to travel around
-const PULSE_DELAY = 0;      // Icon pulses at start
 const SWEEP_DELAY = 0.2;    // Sweep starts slightly after icon pulse
 
 interface DeviceSimulationLayerProps {
@@ -44,7 +42,6 @@ const DeviceRipple = () => {
     />
   );
 };
-
 const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRipple, strokeUrl }: SimulationDeviceProps) => {
   const ASPECT_RATIO = 1.6;
   const height = width * ASPECT_RATIO;
@@ -79,8 +76,9 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRippl
   
   // Determine stroke color/url
   const activeStroke = strokeUrl || "#94a3b8";
-  // If gradient, we usually need 'url(#id)', but framer motion handles color strings well.
-  // For 'url(...)', we just pass it as stroke.
+  // Data Flow Particle Dash Array
+  // Large gap to simulate discrete particles
+  const particleDash = "4 150";
 
   return (
     <AnimatePresence>
@@ -101,62 +99,79 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRippl
                 <path d="M 0 0 L 10 5 L 0 10 z" fill={strokeUrl ? '#9966FF' : "#94a3b8"} />
               </marker>
             </defs>
+            
+            {/* Base Line */}
             <motion.path
               d={path}
               fill="none"
               stroke={activeStroke}
               strokeWidth="2"
-              strokeDasharray={strokeUrl ? "none" : "6 6"} // Solid if boosted/gradient? Or still dashed? "changed the dashed line into gradient color". Typically implies keeping dashed if not specified, but gradient usually looks better solid or requires mask. Let's keep it dashed for now but with gradient.
-              // Wait, gradients on strokes don't ALWAYS play nice with dashes in all browsers, but usually ok.
-              // "changed the dashed line into gradient color" implies keeping dashed.
-              strokeLinecap="round" // nicer caps for dashes
-              
+              strokeDasharray={strokeUrl ? "none" : "6 6"} 
+              strokeLinecap="round"
               markerEnd={`url(#arrow-head-${id})`}
-              initial={{ opacity: 0, strokeDashoffset: 0 }}
-              animate={{ 
-                opacity: 1,
-                strokeDashoffset: [0, -24] 
-              }}
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: 0.5 }}
               exit={{ opacity: 0 }}
-              transition={{ 
-                opacity: { duration: 0.5 },
-                strokeDashoffset: { 
-                  repeat: Infinity, 
-                  ease: "linear", 
-                  duration: 1.0 
-                }
-              }}
+              transition={{ duration: 0.5 }}
+            />
+
+            {/* Data Flow Particle (White/Bright Dash) */}
+            <motion.path
+               d={path}
+               fill="none"
+               stroke={strokeUrl ? "#fff" : "#635BFF"} // White if boosted, Blurple if normal
+               strokeWidth="2"
+               strokeDasharray={particleDash}
+               strokeLinecap="round"
+               initial={{ strokeDashoffset: 0, opacity: 0 }}
+               animate={{ strokeDashoffset: -154, opacity: 1 }} // Move by dash+gap
+               transition={{
+                  strokeDashoffset: {
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "linear"
+                  },
+                  opacity: { duration: 0.5 }
+               }}
+               style={{ filter: 'drop-shadow(0 0 2px rgba(99,91,255,0.5))' }}
             />
           </svg>
 
-          {/* Device Image */}
+          {/* Device Image Container */}
           <motion.div
-            layout // Enable layout animation for smooth position changes
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }} 
+            layout
+            // Entrance Animation (Spring Physics)
+            initial={{ opacity: 0, scale: 0.8, y: 50, rotateX: 15 }}
+            animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }} 
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="absolute z-10"
+            transition={{ 
+                type: "spring", 
+                stiffness: 200, 
+                damping: 20,
+                mass: 1 
+            }}
+            className="absolute z-10 perspective-1000" // perspective for 3d rotation
             style={{
               left: x,
-              top: top, // Passed directly to style
+              top: top,
               width: width,
               height: height,
             }}
           >
-            {hasRipple && <DeviceRipple />}
-            <img 
-              src={image} 
-              alt={id} 
-              className="w-full h-auto block"
-            />
+             <div className="w-full h-full relative">
+                {hasRipple && <DeviceRipple />}
+                <img 
+                  src={image} 
+                  alt={id} 
+                  className="w-full h-full object-contain block drop-shadow-2xl"
+                />
+             </div>
           </motion.div>
         </>
       )}
     </AnimatePresence>
   );
 };
-
 export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerProps) => {
   const showPhone = activeProducts.includes('payments');
   const showTerminal = activeProducts.includes('terminal');
@@ -201,7 +216,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
   const frameLeft = POS_X - PADDING;
   const frameWidth = DEVICE_WIDTH + (PADDING * 2);
 
-  const perimeter = 2 * (frameWidth + frameHeight);
+  // const perimeter = 2 * (frameWidth + frameHeight); // Unused
 
   // Gradient Setup
   // We need to inject the gradient definition into the DOM.
@@ -234,9 +249,10 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
        <AnimatePresence>
          {showAuthBoost && (showPhone || showTerminal) && (
             <motion.div
-               initial={{ opacity: 0, scale: 0.5 }}
-               animate={{ opacity: 1, scale: 1 }}
-               exit={{ opacity: 0, scale: 0.5 }}
+               initial={{ opacity: 0, scale: 0, rotate: -45 }}
+               animate={{ opacity: 1, scale: 1, rotate: 0 }}
+               exit={{ opacity: 0, scale: 0 }}
+               transition={{ type: "spring", stiffness: 300, damping: 20 }}
                className="absolute z-30 w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center p-2"
                style={{
                   left: 310, // Approx midpoint
@@ -248,7 +264,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
          )}
        </AnimatePresence>
 
-       {/* Radar Fraud Frame */}
+       {/* Radar Fraud Frame - Tech Scanner */}
        <AnimatePresence>
          {showRadar && (showPhone || showTerminal) && (
            <motion.div
@@ -257,69 +273,33 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
              animate={{ opacity: 1, scale: 1 }}
              exit={{ opacity: 0, scale: 0.95 }}
              transition={{ duration: 0.4 }}
-             className="absolute bg-[#FF5996]/5 rounded-2xl z-0 overflow-hidden"
+             className="absolute rounded-xl z-0 overflow-hidden"
              style={{
                left: frameLeft,
                top: frameTop,
                width: frameWidth,
                height: frameHeight,
+               backgroundColor: 'rgba(255, 89, 150, 0.03)',
+               border: '1px solid rgba(255, 89, 150, 0.2)'
              }}
            >
-              {/* SVG Border Frame: Patrol Circuit */}
-              <svg className="absolute inset-0 w-full h-full overflow-visible">
-                 <rect 
-                    x="1" y="1" 
-                    width={frameWidth - 2} 
-                    height={frameHeight - 2} 
-                    rx="15" ry="15"
-                    fill="none"
-                    stroke="#FF5996"
-                    strokeWidth="2"
-                    strokeOpacity="0.3"
-                    strokeDasharray="6 6"
-                 />
-                 <motion.rect 
-                    x="1" y="1" 
-                    width={frameWidth - 2} 
-                    height={frameHeight - 2} 
-                    rx="15" ry="15"
-                    fill="none"
-                    stroke="#FF5996"
-                    strokeWidth="2"
-                    strokeDasharray={`${perimeter * 0.15} ${perimeter * 0.85}`}
-                    initial={{ strokeDashoffset: perimeter * 0.15 }}
-                    animate={{ strokeDashoffset: [perimeter * 0.15, -perimeter * 0.85] }}
-                    transition={{
-                       duration: SWEEP_DURATION,
-                       ease: "linear",
-                       repeat: Infinity,
-                       repeatDelay: CYCLE_DURATION - SWEEP_DURATION,
-                       delay: SWEEP_DELAY,
-                    }}
-                    style={{
-                        stroke: '#fff',
-                        strokeLinecap: 'round',
-                        filter: 'drop-shadow(0 0 4px #FF5996)'
-                    }}
-                 />
+              {/* Tech Corners (SVG) */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                 <path d="M 0 20 V 0 H 20" fill="none" stroke="#FF5996" strokeWidth="2" strokeOpacity="0.6" />
+                 <path d={`M ${frameWidth-20} 0 H ${frameWidth} V 20`} fill="none" stroke="#FF5996" strokeWidth="2" strokeOpacity="0.6" />
+                 <path d={`M ${frameWidth} ${frameHeight-20} V ${frameHeight} H ${frameWidth-20}`} fill="none" stroke="#FF5996" strokeWidth="2" strokeOpacity="0.6" />
+                 <path d={`M 20 ${frameHeight} H 0 V ${frameHeight-20}`} fill="none" stroke="#FF5996" strokeWidth="2" strokeOpacity="0.6" />
               </svg>
 
               {/* Header */}
-              <div className="flex items-center gap-2 p-2 absolute top-0 left-0 w-full">
-                 <motion.img 
+              <div className="flex items-center gap-2 p-2 absolute top-0 left-0 w-full bg-gradient-to-b from-[#FF5996]/10 to-transparent">
+                 <img 
                     src={fraudIcon} 
                     alt="Fraud Detection" 
-                    className="w-5 h-5 relative z-10" 
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{
-                        duration: 0.4,
-                        repeat: Infinity,
-                        repeatDelay: CYCLE_DURATION - 0.4,
-                        delay: PULSE_DELAY
-                    }}
+                    className="w-4 h-4 relative z-10" 
                  />
-                 <span className="text-[#FF5996] font-medium text-xs whitespace-nowrap relative z-10">
-                   Fraud detection
+                 <span className="text-[#FF5996] font-mono text-[10px] tracking-wider uppercase font-bold relative z-10">
+                   System Secure
                  </span>
               </div>
            </motion.div>
