@@ -5,6 +5,12 @@ import fraudIcon from '@/assets/Fraud-detection.svg';
 import { STAGE } from '@/config/products';
 import { ProductId } from '@/types';
 
+// Animation Constants
+const CYCLE_DURATION = 3.5; // Total time for one complete loop + pause
+const SWEEP_DURATION = 2;   // Time for the comet to travel around
+const PULSE_DELAY = 0;      // Icon pulses at start
+const SWEEP_DELAY = 0.2;    // Sweep starts slightly after icon pulse
+
 interface DeviceSimulationLayerProps {
   activeProducts: ProductId[];
 }
@@ -17,9 +23,27 @@ interface SimulationDeviceProps {
   width: number;
   targetY: number; // Where the line hits the card
   isVisible: boolean;
+  hasRipple?: boolean;
 }
 
-const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible }: SimulationDeviceProps) => {
+const DeviceRipple = () => {
+  return (
+    <motion.div
+      className="absolute inset-0 bg-white z-20 pointer-events-none mix-blend-overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: [0, 0.4, 0] }}
+      transition={{
+        duration: 0.6,
+        times: [0, 0.2, 1], // fast attack, slow decay
+        repeat: Infinity,
+        repeatDelay: CYCLE_DURATION - 0.6, 
+        delay: SWEEP_DELAY + 0.3, // Approximate time for sweep to hit device
+      }}
+    />
+  );
+};
+
+const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRipple }: SimulationDeviceProps) => {
   const ASPECT_RATIO = 1.6;
   const height = width * ASPECT_RATIO;
   const top = y - (height / 2);
@@ -110,6 +134,7 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible }: Simula
               height: height,
             }}
           >
+            {hasRipple && <DeviceRipple />}
             <img 
               src={image} 
               alt={id} 
@@ -148,7 +173,6 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
   const PADDING = 20;
   const HEADER_HEIGHT = 40;
   
-  // Determine top and bottom Y of active content
   let contentTopY = CENTER_Y;
   let contentBottomY = CENTER_Y;
 
@@ -166,6 +190,10 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
   const frameLeft = POS_X - PADDING;
   const frameWidth = DEVICE_WIDTH + (PADDING * 2);
 
+  // Perimeter for stroke animation
+  // 2 * (w + h). Note: Rx affects this slightly but approximation is fine for visual effect.
+  const perimeter = 2 * (frameWidth + frameHeight);
+
   return (
     <div className="absolute inset-0 pointer-events-none">
        {/* Radar Fraud Frame */}
@@ -177,7 +205,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
              animate={{ opacity: 1, scale: 1 }}
              exit={{ opacity: 0, scale: 0.95 }}
              transition={{ duration: 0.4 }}
-             className="absolute border-2 border-dashed border-[#FF5996] rounded-2xl bg-[#FF5996]/5 z-0"
+             className="absolute bg-[#FF5996]/5 rounded-2xl z-0 overflow-hidden"
              style={{
                left: frameLeft,
                top: frameTop,
@@ -185,10 +213,72 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
                height: frameHeight,
              }}
            >
+              {/* SVG Border Frame */}
+              <svg className="absolute inset-0 w-full h-full overflow-visible">
+                 {/* Base Dim Dashed Line */}
+                 <rect 
+                    x="1" y="1" 
+                    width={frameWidth - 2} 
+                    height={frameHeight - 2} 
+                    rx="15" ry="15"
+                    fill="none"
+                    stroke="#FF5996"
+                    strokeWidth="2"
+                    strokeOpacity="0.3"
+                    strokeDasharray="6 6"
+                 />
+                 
+                 {/* The Comet (Bright Sweep) */}
+                 <motion.rect 
+                    x="1" y="1" 
+                    width={frameWidth - 2} 
+                    height={frameHeight - 2} 
+                    rx="15" ry="15"
+                    fill="none"
+                    stroke="#FF5996" // Or white? User asked for "dash turns Solid White".
+                    // Let's use a very bright pink/white mix.
+                    strokeWidth="2"
+                    // Head length ~15% of perimeter. Gap rest.
+                    strokeDasharray={`${perimeter * 0.15} ${perimeter * 0.85}`}
+                    initial={{ strokeDashoffset: perimeter * 0.15 }} // Start hidden?
+                    animate={{ 
+                       strokeDashoffset: [perimeter * 0.15, -perimeter * 0.85] 
+                       // Move full loop. 
+                       // Start: Head just before start point.
+                       // End: Head completes loop.
+                       // Actually getting the math perfect for a "loop" requires checking exact svg coords.
+                       // Easier: standard rotate.
+                    }}
+                    transition={{
+                       duration: SWEEP_DURATION,
+                       ease: "linear",
+                       repeat: Infinity,
+                       repeatDelay: CYCLE_DURATION - SWEEP_DURATION,
+                       delay: SWEEP_DELAY,
+                    }}
+                    style={{
+                        stroke: '#fff', // White hot head
+                        strokeLinecap: 'round',
+                        filter: 'drop-shadow(0 0 4px #FF5996)' // Glow
+                    }}
+                 />
+              </svg>
+
               {/* Header */}
               <div className="flex items-center gap-2 p-2 absolute top-0 left-0 w-full">
-                 <img src={fraudIcon} alt="Fraud Detection" className="w-5 h-5" />
-                 <span className="text-[#FF5996] font-medium text-xs whitespace-nowrap">
+                 <motion.img 
+                    src={fraudIcon} 
+                    alt="Fraud Detection" 
+                    className="w-5 h-5 relative z-10" 
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{
+                        duration: 0.4,
+                        repeat: Infinity,
+                        repeatDelay: CYCLE_DURATION - 0.4,
+                        delay: PULSE_DELAY
+                    }}
+                 />
+                 <span className="text-[#FF5996] font-medium text-xs whitespace-nowrap relative z-10">
                    Fraud detection
                  </span>
               </div>
@@ -205,6 +295,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
          targetY={(showPhone && showTerminal) ? stackedPhoneTargetY : CENTER_Y}
          width={DEVICE_WIDTH}
          isVisible={showPhone}
+         hasRipple={showRadar}
        />
        
        {/* Terminal */}
@@ -216,6 +307,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
          targetY={(showPhone && showTerminal) ? stackedTerminalTargetY : CENTER_Y}
          width={DEVICE_WIDTH}
          isVisible={showTerminal}
+         hasRipple={showRadar}
        />
     </div>
   );
