@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import paymentPhone from '@/assets/payment-phone.png';
 import terminalPos from '@/assets/images/terminal-POS.png';
+import fraudIcon from '@/assets/Fraud-detection.svg';
 import { STAGE } from '@/config/products';
 import { ProductId } from '@/types';
 
@@ -30,40 +31,15 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible }: Simula
   // Card Edge
   const cardLeftEdge = STAGE.cardCenterX - 300;
 
-  // Path Logic
-  // We need a path that goes from (startX, startY) to (cardLeftEdge, targetY).
-  // Uses keyframe animation for dash offset.
-  
-  // To make it look elegant:
-  // 1. Horizontal out from device
-  // 2. Curve if needed (if targetY != startY)
-  // 3. Horizontal into card
-  
-  // If we are strictly horizontal (centering logic), simple line.
-  // If we are stacked, we might need a curve? 
-  // Reference image showed nice curved paths.
-  // Let's use a cubic bezier for smooth S-curve if levels differ, or simple line if same.
-  
   let path = '';
   if (Math.abs(targetY - startY) < 5) {
       // Simple horizontal line
       path = `M ${startX} ${startY} L ${cardLeftEdge - 8} ${startY}`;
   } else {
       // Orthogonal Path: 
-      // 1. Horizontal from device
-      // 2. Vertical segment
-      // 3. Horizontal to card
-      
       const midX = (startX + cardLeftEdge) / 2;
       const cornerRadius = 20;
-
-      // Ensure we have enough space for corners
       const safeCornerRadius = Math.min(cornerRadius, Math.abs(midX - startX) / 2);
-
-      // We need to draw a path that looks like:
-      // Start -> [Line] -> [Corner] -> [Vertical Line] -> [Corner] -> [Line] -> End
-
-      // Determine direction of vertical drop
       const verticalDir = targetY > startY ? 1 : -1;
       
       path = `
@@ -149,31 +125,77 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible }: Simula
 export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerProps) => {
   const showPhone = activeProducts.includes('payments');
   const showTerminal = activeProducts.includes('terminal');
+  const showRadar = activeProducts.includes('radar');
 
   // Config
   const POS_X = 140;
-  const CENTER_Y = 510; // Corrected: Card Top (320) + Half Min-Height (190) = 510
-  const STACK_OFFSET = 150; // Increased spacing (was 120)
+  const CENTER_Y = 510;
+  const STACK_OFFSET = 150; 
   
-  // Phone Props
-  const phoneY = (showPhone && showTerminal) ? CENTER_Y - STACK_OFFSET : CENTER_Y;
-  
-  // Reference image showed lines converging to specific input fields or just general area.
-  // Let's keep lines fairly straight or gentle curves.
-  // If stacked, let's target positions on the card that "look good".
-  // Card Center is 510. 
-  // If Phone is high (304), line going to 510 is a steep drop.
-  // Maybe target slightly offset points on the card too?
-  // User ref image: The lines go to inputs.
-  // Let's target: 
-  // Phone -> Top part of card logic (e.g. 460)
-  // Terminal -> Bottom part of card (e.g. 560)
+  // Dimensions
+  const DEVICE_WIDTH = 120;
+  const DEVICE_HEIGHT = DEVICE_WIDTH * 1.6; // 192
+
+  // Logic
+  const isStacked = showPhone && showTerminal;
+  const phoneY = isStacked ? CENTER_Y - STACK_OFFSET : CENTER_Y;
+  const terminalY = isStacked ? CENTER_Y + STACK_OFFSET : CENTER_Y;
   
   const stackedPhoneTargetY = CENTER_Y - 50; 
   const stackedTerminalTargetY = CENTER_Y + 50;
+  
+  // Calculate Frame Bounds
+  const PADDING = 20;
+  const HEADER_HEIGHT = 40;
+  
+  // Determine top and bottom Y of active content
+  let contentTopY = CENTER_Y;
+  let contentBottomY = CENTER_Y;
+
+  if (isStacked) {
+      contentTopY = phoneY - (DEVICE_HEIGHT / 2); // Top of phone
+      contentBottomY = terminalY + (DEVICE_HEIGHT / 2); // Bottom of terminal
+  } else if (showPhone || showTerminal) {
+      // Single device centered
+      contentTopY = CENTER_Y - (DEVICE_HEIGHT / 2);
+      contentBottomY = CENTER_Y + (DEVICE_HEIGHT / 2);
+  }
+
+  const frameTop = contentTopY - PADDING - HEADER_HEIGHT;
+  const frameHeight = (contentBottomY - contentTopY) + (PADDING * 2) + HEADER_HEIGHT;
+  const frameLeft = POS_X - PADDING;
+  const frameWidth = DEVICE_WIDTH + (PADDING * 2);
 
   return (
     <div className="absolute inset-0 pointer-events-none">
+       {/* Radar Fraud Frame */}
+       <AnimatePresence>
+         {showRadar && (showPhone || showTerminal) && (
+           <motion.div
+             layout
+             initial={{ opacity: 0, scale: 0.95 }}
+             animate={{ opacity: 1, scale: 1 }}
+             exit={{ opacity: 0, scale: 0.95 }}
+             transition={{ duration: 0.4 }}
+             className="absolute border-2 border-dashed border-[#FF5996] rounded-2xl bg-[#FF5996]/5 z-0"
+             style={{
+               left: frameLeft,
+               top: frameTop,
+               width: frameWidth,
+               height: frameHeight,
+             }}
+           >
+              {/* Header */}
+              <div className="flex items-center gap-2 p-2 absolute top-0 left-0 w-full">
+                 <img src={fraudIcon} alt="Fraud Detection" className="w-5 h-5" />
+                 <span className="text-[#FF5996] font-medium text-xs whitespace-nowrap">
+                   Fraud detection
+                 </span>
+              </div>
+           </motion.div>
+         )}
+       </AnimatePresence>
+
        {/* Phone */}
        <SimulationDevice 
          id="phone"
@@ -181,7 +203,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
          x={POS_X}
          y={phoneY}
          targetY={(showPhone && showTerminal) ? stackedPhoneTargetY : CENTER_Y}
-         width={120}
+         width={DEVICE_WIDTH}
          isVisible={showPhone}
        />
        
@@ -190,9 +212,9 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
          id="terminal"
          image={terminalPos}
          x={POS_X}
-         y={(showPhone && showTerminal) ? CENTER_Y + STACK_OFFSET : CENTER_Y}
+         y={terminalY}
          targetY={(showPhone && showTerminal) ? stackedTerminalTargetY : CENTER_Y}
-         width={120}
+         width={DEVICE_WIDTH}
          isVisible={showTerminal}
        />
     </div>

@@ -24,6 +24,11 @@ export default function App() {
       if (id === 'terminal' && !prev.includes('payments')) {
         return [...prev, id, 'payments'];
       }
+
+      // Logic: Radar requires Payments (to have something to protect)
+      if (id === 'radar' && !prev.includes('payments')) {
+        return [...prev, id, 'payments'];
+      }
       
       return [...prev, id];
     });
