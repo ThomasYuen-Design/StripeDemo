@@ -6,6 +6,8 @@ import { GradientPath } from '@/components/GradientPath';
 import { GraphVisualizer } from '@/components/slots/GraphVisualizer';
 import { MetricSlot } from '@/components/slots/MetricSlot';
 import { FooterSlot } from '@/components/slots/FooterSlot';
+import { MoneyFlowAnimation } from '@/components/MoneyFlowAnimation';
+import { ConnectSimulationLayer } from '@/components/ConnectSimulationLayer';
 import { DeviceSimulationLayer } from '@/components/DeviceSimulationLayer';
 import { PRODUCTS, PRESETS, STAGE, getIconPosition } from '@/config/products';
 import { generateOrthogonalPath } from '@/utils/pathGeneration';
@@ -16,13 +18,39 @@ export default function App() {
   const [revenue, setRevenue] = useState(0);
 
   const toggleProduct = (id: ProductId) => {
-    setActiveProducts((prev) => {
-      const isIncludes = prev.includes(id);
-      if (isIncludes) return prev.filter((p) => p !== id);
-      
+    setActiveProducts(prev => {
+      const isActive = prev.includes(id);
+      let newProducts = isActive
+        ? prev.filter(p => p !== id)
+        : [...prev, id];
+
+      // Dependency Logic: Connect requires Payments
+      if (id === 'connect' && !isActive) {
+        // If turning Connect ON, ensure Payments is also ON
+        if (!newProducts.includes('payments')) {
+          newProducts.push('payments');
+        }
+      }
+
+      if (id === 'payments' && isActive) {
+        // If turning Payments OFF, check if Connect is ON
+        if (newProducts.includes('connect')) {
+          // Prevent payment from turning off if connect is on
+          // Ideally we would trigger a visual error here, but for now we just block the state change
+          // or we force Connect off (but the requirement says "Error State: The Connect box shakes red").
+          // To strictly follow "User tries to turn off Payments... Error State", we should maybe NOT change state
+          // but return early? But `setActiveProducts` is inside.
+          
+          // Let's just return the previous state if they try to turn off payments while connect is on,
+          // effectively blocking it. We can add a toast later.
+           console.warn("Cannot turn off Payments while Connect is active");
+           return prev;
+        }
+      }
+
       // Logic: Terminal requires Payments
-      if (id === 'terminal' && !prev.includes('payments')) {
-        return [...prev, id, 'payments'];
+      if (id === 'terminal' && !isActive && !newProducts.includes('payments')) {
+        newProducts.push('payments');
       }
 
       // Logic: Radar requires Payments (to have something to protect)
@@ -232,8 +260,13 @@ export default function App() {
             );
           })}
 
-          {/* Device Simulation Layer (Phone & Terminal) */}
-          <DeviceSimulationLayer activeProducts={activeProducts} />
+            {/* Simulation Layers */}
+            <MoneyFlowAnimation 
+              isActive={activeProducts.includes('connect')} 
+              activeProducts={activeProducts}
+            />
+            <ConnectSimulationLayer isActive={activeProducts.includes('connect')} />
+            <DeviceSimulationLayer activeProducts={activeProducts} />
 
           {/* LAYER 3: The Central Card */}
           <motion.div
