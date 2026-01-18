@@ -27,12 +27,6 @@ import {
   AuthorizationBoostFilled,
   GlobalPayoutsOutline,
   GlobalPayoutsFilled,
-  RevenueRecognitionOutline,
-  RevenueRecognitionFilled,
-  StripeSigmaOutline,
-  StripeSigmaFilled,
-  DataPipelineOutline,
-  DataPipelineFilled,
 } from '@/components/icons';
 
 /**
@@ -111,33 +105,6 @@ export const PRODUCTS: ProductConfig[] = [
     color: '#00D924',
     description: 'Calculate and collect sales tax'
   },
-  {
-    id: 'revenueRecognition',
-    label: 'Revenue Recognition',
-    icon: Activity,
-    iconOutline: RevenueRecognitionOutline,
-    iconFilled: RevenueRecognitionFilled,
-    color: '#E03071', // Based on SVG gradient
-    description: 'Simplify revenue reporting'
-  },
-  {
-    id: 'stripeSigma',
-    label: 'Stripe Sigma',
-    icon: Activity, // Using Activity as placeholder
-    iconOutline: StripeSigmaOutline,
-    iconFilled: StripeSigmaFilled,
-    color: '#9860FE', // Based on SVG gradient
-    description: 'Custom reporting and insights'
-  },
-  {
-    id: 'dataPipeline',
-    label: 'Data Pipeline',
-    icon: Zap, // Using Zap as placeholder
-    iconOutline: DataPipelineOutline,
-    iconFilled: DataPipelineFilled,
-    color: '#E03071', // Based on SVG gradient
-    description: 'Sync Stripe data to your warehouse'
-  },
 ];
 
 /**
@@ -179,9 +146,9 @@ export const STAGE: StageDimensions = {
  * Calculate icon position on the stage grid
  */
 export const getIconPosition = (index: number): { x: number; y: number } => {
-  const totalWidth = 1200;
+  const totalWidth = 600;
   const startX = (STAGE.width - totalWidth) / 2;
-  const step = totalWidth / (PRODUCTS.length - 1);
+  const step = totalWidth / (PRODUCTS.length > 1 ? PRODUCTS.length - 1 : 1);
 
   return {
     x: startX + (index * step),

@@ -206,8 +206,8 @@ export default function App() {
                 const pos = getIconPosition(index);
                 
                 // Recalculate targetX here as well (could be refactored to helper)
-                const connectionWidth = 440;
-                const connectionStep = connectionWidth / (PRODUCTS.length - 1);
+                const connectionWidth = 300;
+                const connectionStep = connectionWidth / (PRODUCTS.length > 1 ? PRODUCTS.length - 1 : 1);
                 const connectionStartX = STAGE.cardCenterX - (connectionWidth / 2);
                 const targetX = connectionStartX + (index * connectionStep);
 
@@ -226,15 +226,20 @@ export default function App() {
                 // Outer items get more drop
                 const inflectionY = (pos.y + 35) + baseDrop + (distFromCenter * dropStep);
 
-                // Generate orthogonal path with distributed endpoints
-                const d = generateOrthogonalPath({
-                  startX: pos.x,
-                  startY: pos.y + 35,
-                  endX: targetX,
-                  endY: STAGE.cardTopY,
-                  cornerRadius: 20,
-                  convergenceY: inflectionY,
-                });
+                const isStraight = Math.abs(pos.x - targetX) < 60;
+                const finalTargetX = isStraight ? pos.x : targetX;
+
+                // Generate path: Straight line if aligned, otherwise orthogonal
+                const d = isStraight 
+                  ? `M ${pos.x} ${pos.y + 35} L ${finalTargetX} ${STAGE.cardTopY}`
+                  : generateOrthogonalPath({
+                      startX: pos.x,
+                      startY: pos.y + 35,
+                      endX: finalTargetX,
+                      endY: STAGE.cardTopY,
+                      cornerRadius: 20,
+                      convergenceY: inflectionY,
+                    });
 
                 return (
                   <motion.g

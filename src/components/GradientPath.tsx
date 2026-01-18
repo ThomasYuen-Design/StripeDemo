@@ -19,24 +19,32 @@ export const GradientPath = ({ d, gradientId }: GradientPathProps) => {
       <path
         d={d}
         stroke="#cbd5e1"
-        strokeWidth="1.5"
+        strokeWidth="1"
         fill="none"
-        strokeOpacity="0.3"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
+        strokeOpacity="0.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
 
-      {/* Gradient Beam - Animated */}
+      {/* Gradient Beam - Sequenced Animation (Connect -> Hold -> Shoot) */}
       <motion.path
         d={d}
         stroke={`url(#${gradientId})`}
-        strokeWidth="1.5"
+        strokeWidth="2"
         fill="none"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-        initial={{ pathLength: 0, opacity: 0 }}
-        animate={{ pathLength: 1, opacity: 1 }}
-        transition={{ duration: 0.8, ease: 'circOut' }}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        initial={{ strokeDasharray: "0 1000", strokeDashoffset: 0, opacity: 0 }}
+        animate={{ 
+          strokeDasharray: ["0 1000", "1000 1000", "1000 1000", "150 1000"],
+          strokeDashoffset: [0, 0, 0, -1150],
+          opacity: [0, 1, 1, 0]
+        }}
+        transition={{ 
+          duration: 4, 
+          times: [0, 0.2, 0.5, 1],
+          ease: "easeInOut",
+        }}
       />
     </g>
   );
