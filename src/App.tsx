@@ -226,7 +226,7 @@ export default function App() {
                 // Outer items get more drop
                 const inflectionY = (pos.y + 35) + baseDrop + (distFromCenter * dropStep);
 
-                const isStraight = Math.abs(pos.x - targetX) < 60;
+                const isStraight = Math.abs(pos.x - targetX) < 30;
                 const finalTargetX = isStraight ? pos.x : targetX;
 
                 // Generate path: Straight line if aligned, otherwise orthogonal

@@ -34,14 +34,14 @@ export const GradientPath = ({ d, gradientId }: GradientPathProps) => {
         fill="none"
         strokeLinecap="round"
         strokeLinejoin="round"
-        initial={{ strokeDasharray: "0 1000", strokeDashoffset: 0, opacity: 0 }}
+        initial={{ strokeDasharray: "0 3000", strokeDashoffset: 0, opacity: 0 }}
         animate={{ 
-          strokeDasharray: ["0 1000", "1000 1000", "1000 1000", "150 1000"],
-          strokeDashoffset: [0, 0, 0, -1150],
+          strokeDasharray: ["0 3000", "1000 3000", "1000 3000", "150 3000"],
+          strokeDashoffset: [0, 0, 0, -1300],
           opacity: [0, 1, 1, 0]
         }}
         transition={{ 
-          duration: 4, 
+          duration: 3.5, 
           times: [0, 0.2, 0.5, 1],
           ease: "easeInOut",
         }}
