@@ -314,16 +314,32 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
              animate={{ opacity: 1, scale: 1 }}
              exit={{ opacity: 0, scale: 0.95 }}
              transition={{ duration: 0.4 }}
-             className="absolute rounded-2xl z-0"
+             className="absolute z-0"
              style={{
                left: wrapperLeft,
                top: wrapperTop,
                width: wrapperWidth,
                height: wrapperHeight,
-               border: '2px dashed #F3C623',
-               backgroundColor: 'rgba(243, 198, 35, 0.02)', // Very faint fill
              }}
            >
+              <svg className="absolute inset-0 w-full h-full overflow-visible">
+                 <motion.rect
+                    width="100%"
+                    height="100%"
+                    rx="16"
+                    fill="rgba(243, 198, 35, 0.02)"
+                    stroke="#f3c62379"
+                    strokeWidth="1"
+                    strokeLinecap="round"
+                    strokeDasharray="20 10"
+                    animate={{ strokeDashoffset: [0, -30] }}
+                    transition={{
+                       duration: 0.5,
+                       ease: "linear",
+                       repeat: Infinity
+                    }}
+                 />
+              </svg>
               {/* Loop Indicator Icon */}
               <div className="absolute -top-3 -right-3 bg-white p-1 rounded-full shadow-md border border-[#F3C623]">
                  <Repeat className="w-4 h-4 text-[#F3C623]" />
@@ -378,13 +394,6 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
                border: '1px solid rgba(255, 89, 150, 0.2)'
              }}
            >
-              {/* Tech Corners (SVG) */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                 <path d="M 0 20 V 0 H 20" fill="none" stroke="#FF5996" strokeWidth="2" strokeOpacity="0.6" />
-                 <path d={`M ${frameWidth-20} 0 H ${frameWidth} V 20`} fill="none" stroke="#FF5996" strokeWidth="2" strokeOpacity="0.6" />
-                 <path d={`M ${frameWidth} ${frameHeight-20} V ${frameHeight} H ${frameWidth-20}`} fill="none" stroke="#FF5996" strokeWidth="2" strokeOpacity="0.6" />
-                 <path d={`M 20 ${frameHeight} H 0 V ${frameHeight-20}`} fill="none" stroke="#FF5996" strokeWidth="2" strokeOpacity="0.6" />
-              </svg>
 
               {/* Header */}
               <div className="flex items-center gap-2 p-2 absolute top-0 left-0 w-full bg-gradient-to-b from-[#FF5996]/10 to-transparent">
@@ -394,7 +403,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
                     className="w-4 h-4 relative z-10" 
                  />
                  <span className="text-[#FF5996] font-mono text-[10px] tracking-wider uppercase font-bold relative z-10">
-                   System Secure
+                   Fraud Detection
                  </span>
               </div>
            </motion.div>
