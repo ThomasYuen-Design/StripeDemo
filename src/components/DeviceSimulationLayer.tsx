@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Repeat } from 'lucide-react';
 import paymentPhone from '@/assets/payment-phone.png';
@@ -44,34 +45,55 @@ const DeviceRipple = () => {
   );
 };
 const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRipple, strokeUrl }: SimulationDeviceProps) => {
+  const [internalVisible, setInternalVisible] = useState(isVisible);
+  const [isLineReady, setIsLineReady] = useState(false);
+  
+  // Local state to "freeze" position during exit
+  const [pos, setPos] = useState({ y, targetY });
+
+  useEffect(() => {
+    if (isVisible) {
+      setInternalVisible(true);
+      setPos({ y, targetY });
+    } else {
+      // Step 1: Hide line first
+      setIsLineReady(false);
+      // Step 2: After line fades, hide device (500ms matches line transition)
+      const timer = setTimeout(() => {
+        setInternalVisible(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible, y, targetY]);
+  
   const ASPECT_RATIO = 1.6;
   const height = width * ASPECT_RATIO;
-  const top = y - (height / 2);
+  const top = pos.y - (height / 2);
   
   // Line start (center of device)
   const startX = x + width / 2;
-  const startY = y;
+  const startY = pos.y;
   
   // Card Edge
   const cardLeftEdge = STAGE.cardCenterX - 300;
 
   // Render Logic for Path
   let path = '';
-  if (Math.abs(targetY - startY) < 5) {
+  if (Math.abs(pos.targetY - startY) < 5) {
       path = `M ${startX} ${startY} L ${cardLeftEdge - 8} ${startY}`;
   } else {
       const midX = (startX + cardLeftEdge) / 2;
       const cornerRadius = 20;
       const safeCornerRadius = Math.min(cornerRadius, Math.abs(midX - startX) / 2);
-      const verticalDir = targetY > startY ? 1 : -1;
+      const verticalDir = pos.targetY > startY ? 1 : -1;
       
       path = `
         M ${startX} ${startY}
         L ${midX - safeCornerRadius} ${startY}
         Q ${midX} ${startY} ${midX} ${startY + (safeCornerRadius * verticalDir)}
-        L ${midX} ${targetY - (safeCornerRadius * verticalDir)}
-        Q ${midX} ${targetY} ${midX + safeCornerRadius} ${targetY}
-        L ${cardLeftEdge - 8} ${targetY}
+        L ${midX} ${pos.targetY - (safeCornerRadius * verticalDir)}
+        Q ${midX} ${pos.targetY} ${midX + safeCornerRadius} ${pos.targetY}
+        L ${cardLeftEdge - 8} ${pos.targetY}
       `;
   }
   
@@ -83,60 +105,70 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRippl
 
   return (
     <AnimatePresence>
-      {isVisible && (
+      {internalVisible && (
         <>
-          {/* Connecting Line */}
-          <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-0">
-             <defs>
-              <marker
-                id={`arrow-head-${id}`}
-                viewBox="0 0 10 10"
-                refX="5"
-                refY="5"
-                markerWidth="3"
-                markerHeight="3"
-                orient="auto-start-reverse"
-              >
-                <path d="M 0 0 L 10 5 L 0 10 z" fill={strokeUrl ? '#9966FF' : "#94a3b8"} />
-              </marker>
-            </defs>
-            
-            {/* Base Line */}
-            <motion.path
-              d={path}
-              fill="none"
-              stroke={activeStroke}
-              strokeWidth="2"
-              strokeDasharray={strokeUrl ? "none" : "6 6"} 
-              strokeLinecap="round"
-              markerEnd={`url(#arrow-head-${id})`}
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 0.5 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            />
+          {/* Connecting Line - Only show when device is ready and not exiting */}
+          <AnimatePresence>
+            {isLineReady && (
+              <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-0">
+               <defs>
+                <marker
+                  id={`arrow-head-${id}`}
+                  viewBox="0 0 10 10"
+                  refX="5"
+                  refY="5"
+                  markerWidth="3"
+                  markerHeight="3"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill={strokeUrl ? '#9966FF' : "#94a3b8"} />
+                </marker>
+              </defs>
+              
+              {/* Base Line */}
+              <motion.path
+                d={path}
+                fill="none"
+                stroke={activeStroke}
+                strokeWidth="2"
+                strokeDasharray={strokeUrl ? "none" : "6 6"} 
+                strokeLinecap="round"
+                markerEnd={`url(#arrow-head-${id})`}
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 0.5, d: path }}
+                exit={{ pathLength: 0, opacity: 0 }}
+                transition={{ 
+                  pathLength: { duration: 0.5 },
+                  d: { type: "spring", stiffness: 200, damping: 20 },
+                  opacity: { duration: 0.3 }
+                }}
+              />
 
-            {/* Data Flow Particle (White/Bright Dash) */}
-            <motion.path
-               d={path}
-               fill="none"
-               stroke={strokeUrl ? "#fff" : "#635BFF"} // White if boosted, Blurple if normal
-               strokeWidth="2"
-               strokeDasharray={particleDash}
-               strokeLinecap="round"
-               initial={{ strokeDashoffset: 0, opacity: 0 }}
-               animate={{ strokeDashoffset: -154, opacity: 1 }} // Move by dash+gap
-               transition={{
-                  strokeDashoffset: {
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "linear"
-                  },
-                  opacity: { duration: 0.5 }
-               }}
-               style={{ filter: 'drop-shadow(0 0 2px rgba(99,91,255,0.5))' }}
-            />
-          </svg>
+              {/* Data Flow Particle (White/Bright Dash) */}
+              <motion.path
+                 d={path}
+                 fill="none"
+                 stroke={strokeUrl ? "#fff" : "#635BFF"} // White if boosted, Blurple if normal
+                 strokeWidth="2"
+                 strokeDasharray={particleDash}
+                 strokeLinecap="round"
+                 initial={{ strokeDashoffset: 0, opacity: 0 }}
+                 animate={{ strokeDashoffset: -154, opacity: 1, d: path }} // Move by dash+gap
+                 exit={{ opacity: 0 }}
+                 transition={{
+                    strokeDashoffset: {
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: "linear"
+                    },
+                    opacity: { duration: 0.3 },
+                    d: { type: "spring", stiffness: 200, damping: 20 }
+                 }}
+                 style={{ filter: 'drop-shadow(0 0 2px rgba(99,91,255,0.5))' }}
+              />
+            </svg>
+            )}
+          </AnimatePresence>
 
           {/* Device Image Container */}
           <motion.div
@@ -150,6 +182,9 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRippl
                 stiffness: 200, 
                 damping: 20,
                 mass: 1 
+            }}
+            onAnimationComplete={() => {
+              if (isVisible) setIsLineReady(true);
             }}
             className="absolute z-10 perspective-1000" // perspective for 3d rotation
             style={{
@@ -190,12 +225,29 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
   const DEVICE_HEIGHT = DEVICE_WIDTH * 1.6; // 192
 
   // Logic
+  // Logic
   const isStacked = showPhone && showTerminal;
-  const phoneY = isStacked ? CENTER_Y - STACK_OFFSET : CENTER_Y;
-  const terminalY = isStacked ? CENTER_Y + STACK_OFFSET : CENTER_Y;
+  const [effectivelyStacked, setEffectivelyStacked] = useState(isStacked);
+
+  useEffect(() => {
+    if (isStacked) {
+      setEffectivelyStacked(true);
+    } else {
+      const timer = setTimeout(() => {
+        setEffectivelyStacked(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isStacked]);
+
+  const phoneY = effectivelyStacked ? CENTER_Y - STACK_OFFSET : CENTER_Y;
+  const terminalY = effectivelyStacked ? CENTER_Y + STACK_OFFSET : CENTER_Y;
   
   const stackedPhoneTargetY = CENTER_Y - 50; 
   const stackedTerminalTargetY = CENTER_Y + 50;
+  
+  const phoneTargetY = (showPhone && effectivelyStacked) ? stackedPhoneTargetY : CENTER_Y;
+  const terminalTargetY = (showTerminal && effectivelyStacked) ? stackedTerminalTargetY : CENTER_Y;
   
   // Calculate Frame Bounds
   const PADDING = 20;
@@ -204,7 +256,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
   let contentTopY = CENTER_Y;
   let contentBottomY = CENTER_Y;
 
-  if (isStacked) {
+  if (effectivelyStacked) {
       contentTopY = phoneY - (DEVICE_HEIGHT / 2); // Top of phone
       contentBottomY = terminalY + (DEVICE_HEIGHT / 2); // Bottom of terminal
   } else if (showPhone || showTerminal) {
@@ -339,7 +391,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
          image={paymentPhone}
          x={POS_X}
          y={phoneY}
-         targetY={(showPhone && showTerminal) ? stackedPhoneTargetY : CENTER_Y}
+         targetY={phoneTargetY}
          width={DEVICE_WIDTH}
          isVisible={showPhone}
          hasRipple={showRadar}
@@ -352,7 +404,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
          image={terminalPos}
          x={POS_X}
          y={terminalY}
-         targetY={(showPhone && showTerminal) ? stackedTerminalTargetY : CENTER_Y}
+         targetY={terminalTargetY}
          width={DEVICE_WIDTH}
          isVisible={showTerminal}
          hasRipple={showRadar}
