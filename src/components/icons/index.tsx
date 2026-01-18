@@ -201,17 +201,20 @@ export const AuthorizationBoostOutline: React.FC<IconProps> = ({ size = 40, clas
 
 export const AuthorizationBoostFilled: React.FC<IconProps> = ({ size = 40, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    <path d="M5 35V6.99997C4.99959 6.3584 5.20486 5.7336 5.58569 5.21729C5.96651 4.70097 6.50283 4.32034 7.1159 4.13128C7.72898 3.94221 8.38652 3.95466 8.992 4.1668C9.59748 4.37895 10.119 4.77961 10.48 5.30997L21.2 21L9.32 38H8C7.20435 38 6.44129 37.6839 5.87868 37.1213C5.31607 36.5587 5 35.7956 5 35Z" fill="url(#paint0_linear_auth_boost)"/>
-    <path d="M8.06003 4.00001H33.22C33.51 4.00175 33.7932 4.08748 34.0354 4.24684C34.2777 4.40619 34.4685 4.63233 34.5849 4.8979C34.7013 5.16346 34.7382 5.45707 34.6912 5.74318C34.6442 6.02929 34.5153 6.29565 34.32 6.51001L21.15 21L5.84003 4.92001C6.12552 4.62318 6.46907 4.38831 6.84929 4.23003C7.2295 4.07175 7.63823 3.99345 8.05003 4.00001H8.06003Z" fill="url(#paint1_linear_auth_boost)"/>
-    <path d="M7.88003 38H33.2C33.4908 38.0002 33.7754 37.9159 34.0191 37.7573C34.2629 37.5986 34.4552 37.3726 34.5729 37.1067C34.6905 36.8407 34.7282 36.5463 34.6816 36.2593C34.6349 35.9723 34.5058 35.705 34.31 35.49L21.11 21L7.14003 36.33C7.01057 36.4734 6.92544 36.6513 6.89493 36.8421C6.86442 37.0329 6.88984 37.2285 6.96812 37.4051C7.0464 37.5818 7.17418 37.732 7.33602 37.8375C7.49785 37.9431 7.6868 37.9995 7.88003 38Z" fill="#9A66FF"/>
+    <path d="M9.13806 4.1033C9.06332 2.9822 9.95253 2.03174 11.0762 2.03174H35.5C36.8807 2.03174 38 3.15103 38 4.53174V28.9556C38 30.0792 37.0495 30.9684 35.9284 30.8936C21.5483 29.935 10.0968 18.4834 9.13806 4.1033Z" fill="#9966FF"/>
+    <path d="M2.13806 11.1033C2.06332 9.9822 2.95253 9.03174 4.07612 9.03174H28.5C29.8807 9.03174 31 10.151 31 11.5317V35.9556C31 37.0792 30.0495 37.9684 28.9284 37.8936C14.5483 36.935 3.09674 25.4834 2.13806 11.1033Z" fill="url(#paint0_linear_auth_boost)"/>
+    <path fillRule="evenodd" clipRule="evenodd" d="M30.9998 30.1351C20.5998 27.5966 12.435 19.4318 9.89648 9.03174H28.4998C29.8805 9.03174 30.9998 10.151 30.9998 11.5317V30.1351Z" fill="url(#paint1_linear_auth_boost)"/>
     <defs>
-      <linearGradient id="paint0_linear_auth_boost" x1="13.1" y1="38" x2="13.1" y2="12.99" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#9860FE"/>
-        <stop offset="1" stopColor="#6E00F5"/>
+      <linearGradient id="paint0_linear_auth_boost" x1="16.2942" y1="16.7651" x2="16.2075" y2="36.4202" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#11EFE3"/>
+        <stop offset="0.33" stopColor="#15E8E2"/>
+        <stop offset="0.74" stopColor="#1FD3E0"/>
+        <stop offset="1" stopColor="#21CFE0"/>
       </linearGradient>
-      <linearGradient id="paint1_linear_auth_boost" x1="20.28" y1="8.42001" x2="20.28" y2="19.47" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FF5091"/>
-        <stop offset="1" stopColor="#E03071"/>
+      <linearGradient id="paint1_linear_auth_boost" x1="22.0036" y1="27.9902" x2="26.4551" y2="5.55009" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#0048E5"/>
+        <stop offset="0.63979" stopColor="#625AF5"/>
+        <stop offset="1" stopColor="#8A62FC"/>
       </linearGradient>
     </defs>
   </svg>

@@ -25,7 +25,7 @@ interface SimulationDeviceProps {
   targetY: number; // Where the line hits the card
   isVisible: boolean;
   hasRipple?: boolean;
-  strokeUrl?: string; // Optional custom stroke (gradient)
+  isBoosted?: boolean;
 }
 
 const DeviceRipple = () => {
@@ -44,7 +44,7 @@ const DeviceRipple = () => {
     />
   );
 };
-const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRipple, strokeUrl }: SimulationDeviceProps) => {
+const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRipple, isBoosted }: SimulationDeviceProps) => {
   const [internalVisible, setInternalVisible] = useState(isVisible);
   const [isLineReady, setIsLineReady] = useState(false);
   
@@ -98,77 +98,70 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRippl
   }
   
   // Determine stroke color/url
-  const activeStroke = strokeUrl || "#94a3b8";
-  // Data Flow Particle Dash Array
-  // Large gap to simulate discrete particles
   const particleDash = "4 150";
 
   return (
     <AnimatePresence>
       {internalVisible && (
         <>
-          {/* Connecting Line - Only show when device is ready and not exiting */}
-          <AnimatePresence>
-            {isLineReady && (
-              <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-0">
-               <defs>
-                <marker
-                  id={`arrow-head-${id}`}
-                  viewBox="0 0 10 10"
-                  refX="5"
-                  refY="5"
-                  markerWidth="3"
-                  markerHeight="3"
-                  orient="auto-start-reverse"
-                >
-                  <path d="M 0 0 L 10 5 L 0 10 z" fill={strokeUrl ? '#9966FF' : "#94a3b8"} />
-                </marker>
-              </defs>
-              
-              {/* Base Line */}
+          {/* Connecting Line - Only show when device is ready */}
+          {isLineReady && (
+            <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-0">
+              {/* Base Line - Normal (Grey Dashed) - Always rendered */}
               <motion.path
                 d={path}
                 fill="none"
-                stroke={activeStroke}
+                stroke="#94a3b8"
                 strokeWidth="2"
-                strokeDasharray={strokeUrl ? "none" : "6 6"} 
+                strokeDasharray="6 6"
                 strokeLinecap="round"
-                markerEnd={`url(#arrow-head-${id})`}
+                markerEnd="url(#global-arrow-normal)"
                 initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 0.5, d: path }}
-                exit={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: isBoosted ? 0 : 0.5 }}
                 transition={{ 
                   pathLength: { duration: 0.5 },
-                  d: { type: "spring", stiffness: 200, damping: 20 },
+                  opacity: { duration: 0.3 }
+                }}
+              />
+              
+              {/* Base Line - Boosted (Gradient Solid) - Always rendered */}
+              <motion.path
+                d={path}
+                fill="none"
+                stroke="url(#global-boost-gradient)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                markerEnd="url(#global-arrow-boosted)"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: isBoosted ? 0.9 : 0 }}
+                transition={{ 
+                  pathLength: { duration: 0.5 },
                   opacity: { duration: 0.3 }
                 }}
               />
 
               {/* Data Flow Particle (White/Bright Dash) */}
               <motion.path
-                 d={path}
-                 fill="none"
-                 stroke={strokeUrl ? "#fff" : "#635BFF"} // White if boosted, Blurple if normal
-                 strokeWidth="2"
-                 strokeDasharray={particleDash}
-                 strokeLinecap="round"
-                 initial={{ strokeDashoffset: 0, opacity: 0 }}
-                 animate={{ strokeDashoffset: -154, opacity: 1, d: path }} // Move by dash+gap
-                 exit={{ opacity: 0 }}
-                 transition={{
-                    strokeDashoffset: {
-                      duration: 1.5,
-                      repeat: Infinity,
-                      ease: "linear"
-                    },
-                    opacity: { duration: 0.3 },
-                    d: { type: "spring", stiffness: 200, damping: 20 }
-                 }}
-                 style={{ filter: 'drop-shadow(0 0 2px rgba(99,91,255,0.5))' }}
+                d={path}
+                fill="none"
+                stroke={isBoosted ? "#fff" : "#635BFF"}
+                strokeWidth="2"
+                strokeDasharray={particleDash}
+                strokeLinecap="round"
+                initial={{ strokeDashoffset: 0, opacity: 0 }}
+                animate={{ strokeDashoffset: -154, opacity: 1 }}
+                transition={{
+                  strokeDashoffset: {
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "linear"
+                  },
+                  opacity: { duration: 0.3 }
+                }}
+                style={{ filter: 'drop-shadow(0 0 2px rgba(99,91,255,0.5))' }}
               />
             </svg>
-            )}
-          </AnimatePresence>
+          )}
 
           {/* Device Image Container */}
           <motion.div
@@ -279,13 +272,35 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
 
   return (
     <div className="absolute inset-0 pointer-events-none">
-       {/* Shared Defs */}
+        {/* Shared Defs */}
        <svg className="absolute w-0 h-0">
           <defs>
-             <linearGradient id="boost-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+             <linearGradient id="global-boost-gradient" gradientUnits="userSpaceOnUse" x1="200" y1="0" x2="400" y2="0">
                 <stop offset="0%" stopColor="#11EFE3" />
                 <stop offset="100%" stopColor="#9966FF" />
              </linearGradient>
+             <marker
+               id="global-arrow-normal"
+               viewBox="0 0 10 10"
+               refX="5"
+               refY="5"
+               markerWidth="3"
+               markerHeight="3"
+               orient="auto-start-reverse"
+             >
+               <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
+             </marker>
+             <marker
+               id="global-arrow-boosted"
+               viewBox="0 0 10 10"
+               refX="5"
+               refY="5"
+               markerWidth="3"
+               markerHeight="3"
+               orient="auto-start-reverse"
+             >
+               <path d="M 0 0 L 10 5 L 0 10 z" fill="#9966FF" />
+             </marker>
           </defs>
        </svg>
 
@@ -327,19 +342,19 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
        */}
        <AnimatePresence>
          {showAuthBoost && (showPhone || showTerminal) && (
-            <motion.div
-               initial={{ opacity: 0, scale: 0, rotate: -45 }}
-               animate={{ opacity: 1, scale: 1, rotate: 0 }}
-               exit={{ opacity: 0, scale: 0 }}
-               transition={{ type: "spring", stiffness: 300, damping: 20 }}
-               className="absolute z-30 w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center p-2"
-               style={{
-                  left: 310, // Approx midpoint
-                  top: CENTER_Y - 24, // Centered
-               }}
-            >
-               <img src={authBoostIcon} alt="Authorization Boost" className="w-full h-full" />
-            </motion.div>
+               <motion.div
+                  initial={{ opacity: 0, scale: 0, rotate: -45 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="absolute z-30 w-12 h-12 flex items-center justify-center backdrop-blur-md rounded-xl"
+                  style={{
+                     left: 310, // Approx midpoint
+                     top: CENTER_Y - 24, // Centered
+                  }}
+               >
+                  <img src={authBoostIcon} alt="Authorization Boost" className="w-full h-full" />
+               </motion.div>
          )}
        </AnimatePresence>
 
@@ -395,7 +410,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
          width={DEVICE_WIDTH}
          isVisible={showPhone}
          hasRipple={showRadar}
-         strokeUrl={showAuthBoost ? "url(#boost-gradient)" : undefined}
+         isBoosted={showAuthBoost}
        />
        
        {/* Terminal */}
@@ -408,7 +423,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
          width={DEVICE_WIDTH}
          isVisible={showTerminal}
          hasRipple={showRadar}
-         strokeUrl={showAuthBoost ? "url(#boost-gradient)" : undefined}
+         isBoosted={showAuthBoost}
        />
     </div>
   );

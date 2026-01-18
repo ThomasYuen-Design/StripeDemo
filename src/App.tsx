@@ -62,6 +62,11 @@ export default function App() {
       if (id === 'tax' && !isActive && !newProducts.includes('payments')) {
         newProducts.push('payments');
       }
+
+      // Logic: Authorization Boost requires Payments
+      if (id === 'authorizationBoost' && !isActive && !newProducts.includes('payments')) {
+        newProducts.push('payments');
+      }
       
       return newProducts;
     });
