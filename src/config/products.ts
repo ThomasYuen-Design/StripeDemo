@@ -169,7 +169,7 @@ export const PRESETS: PresetConfig[] = [
  */
 export const STAGE: StageDimensions = {
   width: 1400,
-  height: 800,
+  height: 1000,
   iconY: 100,
   cardTopY: 320,
   cardCenterX: 700,

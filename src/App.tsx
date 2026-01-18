@@ -9,6 +9,7 @@ import { FooterSlot } from '@/components/slots/FooterSlot';
 import { MoneyFlowAnimation } from '@/components/MoneyFlowAnimation';
 import { ConnectSimulationLayer } from '@/components/ConnectSimulationLayer';
 import { DeviceSimulationLayer } from '@/components/DeviceSimulationLayer';
+import { GlobalPayoutsSimulationLayer } from '@/components/GlobalPayoutsSimulationLayer';
 import { PRODUCTS, PRESETS, STAGE, getIconPosition } from '@/config/products';
 import { generateOrthogonalPath } from '@/utils/pathGeneration';
 import type { ProductId, PresetType } from '@/types';
@@ -26,24 +27,15 @@ export default function App() {
 
       // Dependency Logic: Connect requires Payments
       if (id === 'connect' && !isActive) {
-        // If turning Connect ON, ensure Payments is also ON
         if (!newProducts.includes('payments')) {
           newProducts.push('payments');
         }
       }
 
       if (id === 'payments' && isActive) {
-        // If turning Payments OFF, check if Connect is ON
-        if (newProducts.includes('connect')) {
-          // Prevent payment from turning off if connect is on
-          // Ideally we would trigger a visual error here, but for now we just block the state change
-          // or we force Connect off (but the requirement says "Error State: The Connect box shakes red").
-          // To strictly follow "User tries to turn off Payments... Error State", we should maybe NOT change state
-          // but return early? But `setActiveProducts` is inside.
-          
-          // Let's just return the previous state if they try to turn off payments while connect is on,
-          // effectively blocking it. We can add a toast later.
-           console.warn("Cannot turn off Payments while Connect is active");
+        // If turning Payments OFF, check if Connect or Global Payouts is ON
+        if (newProducts.includes('connect') || newProducts.includes('globalPayouts')) {
+           console.warn("Cannot turn off Payments while Connect or Global Payouts is active");
            return prev;
         }
       }
@@ -53,12 +45,17 @@ export default function App() {
         newProducts.push('payments');
       }
 
-      // Logic: Radar requires Payments (to have something to protect)
-      if (id === 'radar' && !prev.includes('payments')) {
-        return [...prev, id, 'payments'];
+      // Logic: Radar requires Payments
+      if (id === 'radar' && !isActive && !newProducts.includes('payments')) {
+        newProducts.push('payments');
+      }
+
+      // Logic: Global Payouts requires Payments
+      if (id === 'globalPayouts' && !isActive && !newProducts.includes('payments')) {
+        newProducts.push('payments');
       }
       
-      return [...prev, id];
+      return newProducts;
     });
   };
 
@@ -266,6 +263,7 @@ export default function App() {
               activeProducts={activeProducts}
             />
             <ConnectSimulationLayer isActive={activeProducts.includes('connect')} />
+            <GlobalPayoutsSimulationLayer isActive={activeProducts.includes('globalPayouts')} />
             <DeviceSimulationLayer activeProducts={activeProducts} />
 
           {/* LAYER 3: The Central Card */}
