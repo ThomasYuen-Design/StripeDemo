@@ -255,17 +255,19 @@ export const GlobalPayoutsOutline: React.FC<IconProps> = ({ size = 42, className
 
 export const GlobalPayoutsFilled: React.FC<IconProps> = ({ size = 40, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    <path d="M12.7419 13.9523H11.5316C5.48385 13.9523 0.645142 19.2994 0.645142 25.4426C0.645142 31.5858 5.48385 36.9342 11.5329 36.9342H24.8387C26.1742 36.9342 27.258 35.8504 27.258 34.5149V26.0465H15.1613C14.5196 26.0465 13.9042 25.7916 13.4505 25.3379C12.9968 24.8842 12.7419 24.2688 12.7419 23.6271V13.9497V13.9523Z" fill="url(#paint0_linear_global_payout)"/>
-    <path d="M27.2581 16.3716C27.2581 15.0348 26.1742 13.9509 24.8387 13.9509H12.7419V23.6283C12.7419 24.9651 13.8258 26.0477 15.1613 26.0477H27.2581V16.3716Z" fill="url(#paint1_linear_global_payout)"/>
-    <path d="M12.7419 5.48393C12.7419 4.14716 13.8258 3.06458 15.1613 3.06458H28.4684C34.5161 3.06458 39.3548 8.41296 39.3548 14.5562C39.3548 20.7007 34.5161 26.0478 28.4671 26.0478H27.2581V16.3704C27.2581 15.0349 26.1742 13.9523 24.8387 13.9523H12.7419V5.48393Z" fill="#9A66FF"/>
+    <path fillRule="evenodd" clipRule="evenodd" d="M2 17H35C35.7957 17 36.5587 17.3161 37.1213 17.8787C37.6839 18.4413 38 19.2044 38 20V37C38 37.7956 37.6839 38.5587 37.1213 39.1213C36.5587 39.6839 35.7957 40 35 40H5C4.20435 40 3.44129 39.6839 2.87868 39.1213C2.31607 38.5587 2 37.7956 2 37V17Z" fill="#0073E6"/>
+    <path d="M17.77 0.360045L3.03 11.08C2.71127 11.3117 2.45182 11.6155 2.27282 11.9666C2.09382 12.3176 2.00034 12.706 2 13.1V37.12C2 38.11 2.67 39.14 3.68 39.71C3.18 38.61 3.34 37.35 4.35 36.68L19.72 25.5C20.0387 25.2683 20.2982 24.9646 20.4772 24.6135C20.6562 24.2625 20.7497 23.8741 20.75 23.48V1.88005C20.7492 1.53425 20.653 1.19539 20.472 0.900729C20.291 0.606071 20.0323 0.367035 19.7242 0.209914C19.4162 0.0527935 19.0708 -0.0163245 18.726 0.0101627C18.3812 0.03665 18.0504 0.157716 17.77 0.360045Z" fill="url(#paint0_linear_7_237)"/>
+    <path fillRule="evenodd" clipRule="evenodd" d="M20.75 17V23.5C20.75 24.3 20.37 25.04 19.72 25.51L4.35 36.68C3.34 37.35 3.18 38.6 3.68 39.71V39.69C3.00023 39.3116 2.47078 38.7116 2.18 37.99C2.06469 37.6725 2.00383 37.3378 2 37V17H20.75Z" fill="url(#paint1_linear_7_237)"/>
     <defs>
-      <linearGradient id="paint0_linear_global_payout" x1="12.7419" y1="15.1613" x2="6.93546" y2="37.4194" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#E03071"/>
-        <stop offset="1" stopColor="#FF5091"/>
+      <linearGradient id="paint0_linear_7_237" x1="11.38" y1="2.61005" x2="11.38" y2="23.3" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#11EFE3"/>
+        <stop offset="0.33" stopColor="#15E8E2"/>
+        <stop offset="0.74" stopColor="#1FD3E0"/>
+        <stop offset="1" stopColor="#21CFE0"/>
       </linearGradient>
-      <linearGradient id="paint1_linear_global_payout" x1="16.6129" y1="25.8064" x2="20.1007" y2="11.6851" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#9860FE"/>
-        <stop offset="1" stopColor="#6E00F5"/>
+      <linearGradient id="paint1_linear_7_237" x1="2" y1="25.91" x2="22.91" y2="25.91" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#0073E6"/>
+        <stop offset="1" stopColor="#00299C"/>
       </linearGradient>
     </defs>
   </svg>

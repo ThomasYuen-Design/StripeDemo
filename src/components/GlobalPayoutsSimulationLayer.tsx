@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Globe } from 'lucide-react';
 import { STAGE } from '@/config/products';
 
 interface GlobalPayoutsSimulationLayerProps {
@@ -15,22 +15,19 @@ type RecipientNode = {
   countryCode: string; // for color mapping
   xOffset: number; // Offset from center
   yOffset: number; // Vertical offset in container
+  delay: number;
 };
 
 // Distribute nodes vertically this time to fit under Connect
 const RECIPIENTS: RecipientNode[] = [
-  { id: 'supplier-a', flag: '🇨🇳', currency: 'CNY', label: 'Supplier A', countryCode: 'CN', xOffset: 0, yOffset: 40 },
-  { id: 'contractor-b', flag: '🇬🇧', currency: 'GBP', label: 'Contractor B', countryCode: 'UK', xOffset: 0, yOffset: 100 },
-  { id: 'vendor-c', flag: '🇪🇺', currency: 'EUR', label: 'Vendor C', countryCode: 'EU', xOffset: 0, yOffset: 160 },
+  { id: 'supplier-a', flag: '🇨🇳', currency: 'CNY', label: 'Supplier A', countryCode: 'CN', xOffset: 0, yOffset: 40, delay: 0 },
+  { id: 'contractor-b', flag: '🇬🇧', currency: 'GBP', label: 'Contractor B', countryCode: 'UK', xOffset: 0, yOffset: 120, delay: 0.1 },
+  { id: 'vendor-c', flag: '🇪🇺', currency: 'EUR', label: 'Vendor C', countryCode: 'EU', xOffset: 0, yOffset: 200, delay: 0.2 },
 ];
 
-const getGradient = (countryCode: string) => {
-  switch (countryCode) {
-    case 'CN': return ['#444444', '#D9241E']; // Dark Grey -> Red
-    case 'UK': return ['#444444', '#00247D']; // Dark Grey -> Blue
-    case 'EU': return ['#444444', '#003399']; // Dark Grey -> Euro Blue
-    default: return ['#444444', '#635BFF'];
-  }
+const getGradient = () => {
+  const baseColor = '#cbd5e1'; // Slate 300 (Grey)
+  return [baseColor, baseColor]; // Simple grey base line
 };
 
 export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulationLayerProps) => {
@@ -45,30 +42,46 @@ export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulati
   const SECTION_TOP = 730; // Just below Connect
   
   // Pipeline Routing (Bus Style)
-  // 1. Exit Card Bottom (Center)
-  // 2. Drop slightly (to Pipe Level)
-  // 3. Run Right to Section Left
-  // 4. Drop to specific Node Y
-  const PIPE_Y = SECTION_TOP + 10; // The horizontal "bus" line level
+  // PIPE_Y is now the vertical center of the middle recipient (Contractor B)
+  const PIPE_Y = SECTION_TOP + RECIPIENTS[1].yOffset + 24; 
+  const INTERNAL_X = SECTION_LEFT + 40; // Split point
   
   const getNodePath = (node: RecipientNode) => {
       const startX = STAGE.cardCenterX;
       const startY = CARD_BOTTOM_Y;
       
-      const targetX = SECTION_LEFT + 20; // Entering the box
-      const targetY = SECTION_TOP + node.yOffset + 24; // Center of node (Height 50)
+      const targetX = INTERNAL_X + 24; // Entering the node
+      const targetY = SECTION_TOP + node.yOffset + 24; // Center of node
       
-      // Path:
-      // Start -> Down to PIPE_Y -> Right to SECTION_LEFT -> Down to TargetY -> Right to TargetX
-      // Actually simpler: Start -> Down to PIPE_Y -> Right to SECTION_LEFT -> Down/Up? 
-      // PIPE_Y is 740. Nodes are at 730+40=770+. So always Down.
+      const cornerRadius = 20;
       
+      const p1 = { x: startX, y: startY };
+      const p2 = { x: startX, y: PIPE_Y }; 
+      const p3 = { x: INTERNAL_X, y: PIPE_Y }; 
+      const p4 = { x: INTERNAL_X, y: targetY }; 
+      const p5 = { x: targetX, y: targetY }; 
+      
+      // Check if middle node (straight horizontal)
+      if (Math.abs(targetY - PIPE_Y) < 1) {
+          return `
+            M ${p1.x} ${p1.y}
+            L ${p1.x} ${p2.y - cornerRadius}
+            Q ${p1.x} ${p2.y} ${p1.x + cornerRadius} ${p2.y}
+            L ${p5.x} ${p5.y}
+          `;
+      }
+      
+      const verticalDirection = targetY > PIPE_Y ? 1 : -1;
+
       return `
-        M ${startX} ${startY}
-        L ${startX} ${PIPE_Y} 
-        L ${SECTION_LEFT} ${PIPE_Y}
-        L ${SECTION_LEFT} ${targetY}
-        L ${targetX} ${targetY}
+        M ${p1.x} ${p1.y}
+        L ${p1.x} ${p2.y - cornerRadius}
+        Q ${p1.x} ${p2.y} ${p1.x + cornerRadius} ${p2.y}
+        L ${p3.x - cornerRadius} ${p3.y}
+        Q ${p3.x} ${p3.y} ${p3.x} ${p3.y + (cornerRadius * verticalDirection)}
+        L ${p4.x} ${p4.y - (cornerRadius * verticalDirection)}
+        Q ${p4.x} ${p4.y} ${p4.x + cornerRadius} ${p4.y}
+        L ${p5.x} ${p5.y}
       `;
   };
 
@@ -82,19 +95,21 @@ export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulati
             exit={{ opacity: 0 }}
             className="w-full h-full"
           >
-             {/* Container Box (Dashed) - Vertical now */}
+             {/* Container Box (Dashed) */}
              <motion.div
                 initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 0.5, height: 220 }}
-                className="absolute border-2 border-dashed border-slate-300 rounded-xl bg-slate-50/30"
+                animate={{ opacity: 1, height: 280 }}
+                exit={{ opacity: 0, height: 0 }}
+                className="absolute border-2 border-dashed rounded-3xl bg-slate-50/50"
                 style={{
                     left: SECTION_LEFT,
                     top: SECTION_TOP,
-                    width: 280, // Matches Connect
-                    // Height animated
+                    width: 320, // Widened slightly to accommodate the shift
+                    borderColor: 'rgba(17, 239, 227, 0.3)', // Teal at low opacity
                 }}
              >
-                 <div className="absolute -top-3 left-4 px-2 bg-white text-[10px] font-bold text-slate-400 uppercase tracking-widest border border-slate-200 rounded-full">
+                 <div className="absolute top-4 right-4 flex items-center gap-1.5 text-xs font-semibold text-[#11EFE3] border border-cyan-100 px-2 py-1 rounded-full bg-white shadow-sm">
+                     <Globe className="w-3 h-3" />
                      Global Payouts
                  </div>
              </motion.div>
@@ -103,7 +118,7 @@ export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulati
              <svg className="absolute inset-0 w-full h-full overflow-visible">
                 <defs>
                     {RECIPIENTS.map((node) => {
-                        const colors = getGradient(node.countryCode);
+                        const colors = getGradient();
                         return (
                             <linearGradient 
                                 key={`grad-${node.id}`} 
@@ -113,14 +128,13 @@ export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulati
                                 x2={SECTION_LEFT + 100} y2={SECTION_TOP + 200}
                             >
                                 <stop offset="0%" stopColor={colors[0]} />
-                                <stop offset="70%" stopColor={colors[0]} /> 
                                 <stop offset="100%" stopColor={colors[1]} /> 
                             </linearGradient>
                         );
                     })}
                 </defs>
                 
-                {RECIPIENTS.map((node, i) => {
+                {RECIPIENTS.map((node) => {
                    const d = getNodePath(node);
                    
                    return (
@@ -130,34 +144,33 @@ export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulati
                               d={d}
                               fill="none"
                               stroke={`url(#grad-${node.id})`}
-                              strokeWidth={3}
+                              strokeWidth={2}
                               strokeLinecap="round"
                               strokeLinejoin="round"
-                              initial={{ pathLength: 0 }}
-                              animate={{ pathLength: 1 }}
-                              transition={{ duration: 0.8, delay: i * 0.15 }}
+                              initial={{ pathLength: 0, opacity: 0 }}
+                              animate={{ pathLength: 1, opacity: 0.4 }}
+                              transition={{ duration: 0.8, delay: node.delay }}
                            />
                            
                            {/* Dash Stream */}
                            <motion.path
                               d={d}
                               fill="none"
-                              stroke="#FFF"
-                              strokeWidth={3}
-                              strokeDasharray="4 20" 
+                              stroke="#0073E6"
+                              strokeWidth={2}
+                              strokeDasharray="4 120" 
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               initial={{ strokeDashoffset: 0, opacity: 0 }}
-                              animate={{ strokeDashoffset: -24, opacity: 0.8 }}
+                              animate={{ strokeDashoffset: -124, opacity: 1 }}
                               transition={{
                                   strokeDashoffset: {
-                                    duration: 0.4, 
+                                    duration: 1.5, 
                                     repeat: Infinity,
                                     ease: "linear"
                                   },
-                                  opacity: { duration: 0.3 }
+                                  opacity: { duration: 0.3, delay: node.delay + 0.2 }
                               }}
-                              style={{ mixBlendMode: 'overlay' }}
                            />
                        </g>
                    );
@@ -165,8 +178,9 @@ export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulati
              </svg>
 
              {/* Nodes - Vertical List */}
-             {RECIPIENTS.map((node, i) => {
-                 const targetX = SECTION_LEFT + 20;
+             {RECIPIENTS.map((node) => {
+                 const INTERNAL_X = SECTION_LEFT + 40;
+                 const targetX = INTERNAL_X + 24;
                  const targetY = SECTION_TOP + node.yOffset;
                  
                  return (
@@ -174,22 +188,30 @@ export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulati
                         key={node.id}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 + (i * 0.15) }}
-                        className="absolute flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-3 py-2 shadow-sm"
+                        transition={{ delay: 0.4 + node.delay }}
+                        className="absolute flex items-center gap-3 cursor-pointer group"
                         style={{
                             left: targetX,
                             top: targetY,
-                            width: 240, // Fit inside 280 container
-                            height: 50,
+                            width: 220, 
+                            height: 48,
                         }}
                      >
-                         <span className="text-2xl filter drop-shadow-sm opacity-100">{node.flag}</span>
+                        {/* Flag Avatar */}
+                        <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-xl shadow-sm relative z-10">
+                            {node.flag}
+                             {/* Status Dot */}
+                            <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-white rounded-full flex items-center justify-center shadow-sm">
+                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            </div>
+                        </div>
+
+                        {/* Label */}
                          <div className="flex flex-col leading-tight flex-1">
                              <div className="flex justify-between items-center">
-                                 <span className="text-xs font-bold text-slate-700">{node.label}</span>
-                                 <span className="text-[10px] font-mono bg-slate-100 px-1 rounded text-slate-500">{node.currency}</span>
+                                 <span className="text-sm font-semibold text-slate-700">{node.label}</span>
                              </div>
-                             <span className="text-[10px] text-slate-400">Wire Transfer • Next Day</span>
+                             <span className="text-xs text-slate-400">Wire • Next Day</span>
                          </div>
                      </motion.div>
                  );

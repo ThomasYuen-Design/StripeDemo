@@ -19,9 +19,9 @@ export const ConnectSimulationLayer = ({ isActive }: ConnectSimulationLayerProps
   
   // Nodes Config
   const NODES = [
-    { id: 'store', icon: Store, label: 'Merchant A', sub: 'Marketplace Seller', yOffset: -120, delay: 0 },
+    { id: 'store', icon: Store, label: 'Merchant A', sub: 'Marketplace Seller', yOffset: -80, delay: 0 },
     { id: 'driver', icon: Car, label: 'Driver', sub: 'Gig Worker', yOffset: 0, delay: 0.1 },
-    { id: 'creator', icon: User, label: 'Creator', sub: 'Freelancer', yOffset: 120, delay: 0.2 },
+    { id: 'creator', icon: User, label: 'Creator', sub: 'Freelancer', yOffset: 80, delay: 0.2 },
   ];
 
   // Colors
@@ -38,17 +38,17 @@ export const ConnectSimulationLayer = ({ isActive }: ConnectSimulationLayerProps
              exit={{ opacity: 0 }}
              className="absolute inset-0"
           >
-            {/* 1. The Container Box (Dashed) */}
+             {/* 1. The Container Box (Dashed) */}
             <motion.div
                initial={{ width: 0, opacity: 0 }}
-               animate={{ width: 280, opacity: 1 }}
+               animate={{ width: 320, opacity: 1 }}
                exit={{ width: 0, opacity: 0 }}
                transition={{ duration: 0.6, ease: "easeOut" }}
                className="absolute border-2 border-dashed rounded-3xl bg-slate-50/50 input-events-auto"
                style={{
                  left: START_X + 50, // Gap from card
-                 top: CENTER_Y - 200,
-                 height: 400,
+                 top: CENTER_Y - 140,
+                 height: 280,
                  borderColor: 'rgba(99, 91, 255, 0.3)', // Light blurple
                }}
             >
@@ -65,12 +65,12 @@ export const ConnectSimulationLayer = ({ isActive }: ConnectSimulationLayerProps
             <svg className="absolute inset-0 w-full h-full overflow-visible">
               {NODES.map((node) => {
                  const start = { x: START_X, y: CENTER_Y };
-                 const nodeX = START_X + 50 + 60; 
+                 const nodeX = START_X + 50 + 64; 
                  const nodeY = CENTER_Y + node.yOffset;
                  
                  // Orthogonal Path Generation (Horizontal -> Vertical -> Horizontal)
                  // Shift branching point (midX) closer to nodes to avoid overlap with dashed box
-                 const midX = nodeX - 30; // Branch 30px before the icon
+                 const midX = nodeX - 24; // Branch 24px before the icon (aligned with Global Payouts)
                  const cornerRadius = 20;
                  
                  // Check if straight line
@@ -138,7 +138,7 @@ export const ConnectSimulationLayer = ({ isActive }: ConnectSimulationLayerProps
 
             {/* 3. The Nodes (HTML Elements for interaction) */}
             {NODES.map((node) => {
-               const nodeX = START_X + 50 + 60; 
+               const nodeX = START_X + 50 + 64; 
                const nodeY = CENTER_Y + node.yOffset;
                
                return (
@@ -155,7 +155,7 @@ export const ConnectSimulationLayer = ({ isActive }: ConnectSimulationLayerProps
                  >
                     <div className="flex items-center gap-3">
                        {/* Avatar Circle */}
-                       <div className="w-12 h-12 rounded-full border-2 border-slate-200 bg-white flex items-center justify-center shadow-md relative z-10 transition-colors">
+                       <div className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center shadow-sm relative z-10 transition-colors">
                           <node.icon className="w-5 h-5 text-slate-500" />
                           
                           {/* Status Dot */}
