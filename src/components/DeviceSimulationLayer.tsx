@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { Repeat } from 'lucide-react';
 import paymentPhone from '@/assets/payment-phone.png';
 import terminalPos from '@/assets/images/terminal-POS.png';
 import fraudIcon from '@/assets/Fraud-detection.svg';
@@ -177,6 +178,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
   const showTerminal = activeProducts.includes('terminal');
   const showRadar = activeProducts.includes('radar');
   const showAuthBoost = activeProducts.includes('authorizationBoost');
+  const showBilling = activeProducts.includes('billing');
 
   // Config
   const POS_X = 140;
@@ -216,14 +218,12 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
   const frameLeft = POS_X - PADDING;
   const frameWidth = DEVICE_WIDTH + (PADDING * 2);
 
-  // const perimeter = 2 * (frameWidth + frameHeight); // Unused
-
-  // Gradient Setup
-  // We need to inject the gradient definition into the DOM.
-  // We can put it in a hidden SVG or inside one of the SimulationDevice SVGs?
-  // Better to put it once in a shared hidden SVG or similar.
-  // Or just put it in the "Fraud Frame" container which is persistent?
-  // Actually, let's put it in the main container.
+  // Billing Wrapper Calculations
+  const BILLING_PADDING = 20; // 20px padding around Radar/Device frame
+  const wrapperTop = frameTop - BILLING_PADDING;
+  const wrapperLeft = frameLeft - BILLING_PADDING;
+  const wrapperWidth = frameWidth + (BILLING_PADDING * 2);
+  const wrapperHeight = frameHeight + (BILLING_PADDING * 2);
 
   return (
     <div className="absolute inset-0 pointer-events-none">
@@ -236,6 +236,33 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
              </linearGradient>
           </defs>
        </svg>
+
+       {/* Billing Wrapper Frame (Outer) */}
+       <AnimatePresence>
+         {showBilling && (showPhone || showTerminal) && (
+           <motion.div
+             layout
+             initial={{ opacity: 0, scale: 0.95 }}
+             animate={{ opacity: 1, scale: 1 }}
+             exit={{ opacity: 0, scale: 0.95 }}
+             transition={{ duration: 0.4 }}
+             className="absolute rounded-2xl z-0"
+             style={{
+               left: wrapperLeft,
+               top: wrapperTop,
+               width: wrapperWidth,
+               height: wrapperHeight,
+               border: '2px dashed #F3C623',
+               backgroundColor: 'rgba(243, 198, 35, 0.02)', // Very faint fill
+             }}
+           >
+              {/* Loop Indicator Icon */}
+              <div className="absolute -top-3 -right-3 bg-white p-1 rounded-full shadow-md border border-[#F3C623]">
+                 <Repeat className="w-4 h-4 text-[#F3C623]" />
+              </div>
+           </motion.div>
+         )}
+       </AnimatePresence>
        
        {/* Auth Boost Icon Overlay */}
        {/* Position: Midpoint between X=140+120(260) and Card=400? 
