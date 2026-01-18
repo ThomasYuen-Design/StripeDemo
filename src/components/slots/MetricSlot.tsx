@@ -1,42 +1,30 @@
 import { motion } from 'framer-motion';
-import type { ProductId } from '@/types';
+import { TrendingUp } from 'lucide-react';
 
 interface MetricSlotProps {
-  activeProducts: ProductId[];
-  revenue: number;
+  label?: string;
+  value: string;
+  trend?: string;
 }
 
-export const MetricSlot = ({ activeProducts, revenue }: MetricSlotProps) => {
-  let label = 'Total Revenue';
-
-  if (activeProducts.includes('connect')) {
-    label = 'Gross Merchandise Value';
-  } else if (activeProducts.includes('billing')) {
-    label = 'Monthly Recurring Revenue (MRR)';
-  }
-
+export const MetricSlot = ({ label = "NET VOLUME", value, trend = "+32.8%" }: MetricSlotProps) => {
   return (
     <div className="flex flex-col">
-      <h4 className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">
+      <h4 className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-2">
         {label}
       </h4>
-      <motion.div
-        key={label}
-        initial={{ y: 5, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="text-4xl font-mono text-slate-900 tracking-tighter"
-      >
-        $
-        {revenue.toLocaleString(undefined, {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}
-      </motion.div>
-      {activeProducts.includes('connect') && (
-        <span className="text-xs text-slate-500 mt-1 font-mono">
-          Net: ${(revenue * 0.15).toLocaleString()}
-        </span>
-      )}
+      <div className="flex items-end gap-3">
+        <motion.div
+          key={value} // simplistic key for now, might animate better with pure numbers
+          className="text-3xl font-bold text-slate-900 tracking-tight"
+        >
+          {value}
+        </motion.div>
+        <div className="flex items-center gap-1 text-emerald-500 text-sm font-semibold mb-1">
+            <TrendingUp size={14} strokeWidth={3} />
+            {trend}
+        </div>
+      </div>
     </div>
   );
 };

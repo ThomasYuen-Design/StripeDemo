@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BarChart3, Globe } from 'lucide-react';
 import { ProductIcon } from '@/components/ProductIcon';
 import { GradientPath } from '@/components/GradientPath';
-import { GraphVisualizer } from '@/components/slots/GraphVisualizer';
-import { MetricSlot } from '@/components/slots/MetricSlot';
-import { FooterSlot } from '@/components/slots/FooterSlot';
 import { MoneyFlowAnimation } from '@/components/MoneyFlowAnimation';
+import { CentralCard } from '@/components/CentralCard';
 import { ConnectSimulationLayer } from '@/components/ConnectSimulationLayer';
 import { DeviceSimulationLayer } from '@/components/DeviceSimulationLayer';
 import { GlobalPayoutsSimulationLayer } from '@/components/GlobalPayoutsSimulationLayer';
@@ -17,7 +14,7 @@ import type { ProductId, PresetType } from '@/types';
 
 export default function App() {
   const [activeProducts, setActiveProducts] = useState<ProductId[]>([]);
-  const [revenue, setRevenue] = useState(0);
+
 
   const toggleProduct = (id: ProductId) => {
     setActiveProducts(prev => {
@@ -70,27 +67,16 @@ export default function App() {
     });
   };
 
-  useEffect(() => {
-    // Revenue ticker animation
-    const interval = setInterval(() => {
-      setRevenue((prev) => {
-        if (activeProducts.length === 0) return 0;
-        const increment = activeProducts.includes('connect') ? 1250.5 : 120.25;
-        return prev + increment;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [activeProducts]);
+
 
   const applyPreset = async (type: PresetType) => {
     setActiveProducts([]);
-    setRevenue(12000);
+
 
     const preset = PRESETS.find((p) => p.id === type);
     if (!preset) return;
 
     for (let i = 0; i < preset.products.length; i++) {
-      await new Promise((r) => setTimeout(r, 400));
       const pid = preset.products[i];
       if (PRODUCTS.some((p) => p.id === pid)) {
         setActiveProducts((prev) => [...prev, pid]);
@@ -98,8 +84,7 @@ export default function App() {
     }
   };
 
-  const hasClimate = activeProducts.includes('climate');
-  const hasAtlas = activeProducts.includes('atlas');
+
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-stripe-purple selection:text-white flex flex-col overflow-hidden">
@@ -283,74 +268,9 @@ export default function App() {
             <TaxSimulationLayer isActive={activeProducts.includes('tax')} />
             <DeviceSimulationLayer activeProducts={activeProducts} />
 
+
           {/* LAYER 3: The Central Card */}
-          <motion.div
-            layout="position"
-            initial={false}
-            animate={{
-              boxShadow: hasClimate
-                ? '0 20px 50px -12px rgba(0, 217, 36, 0.25)'
-                : activeProducts.length > 0
-                  ? '0 20px 50px -12px rgba(99, 91, 255, 0.25)'
-                  : '0 10px 30px -10px rgba(0,0,0,0.1)',
-              borderColor: hasClimate
-                ? 'rgba(0, 217, 36, 0.3)'
-                : 'rgba(226, 232, 240, 1)',
-            }}
-            className={`
-              absolute z-20 w-[90%] md:w-[600px] bg-white rounded-3xl border border-slate-200 overflow-hidden flex flex-col
-              transition-colors duration-500
-              ${hasClimate ? 'bg-gradient-to-br from-green-50 to-white' : ''}
-            `}
-            style={{
-              left: `${(STAGE.cardCenterX / STAGE.width) * 100}%`,
-              top: `${(STAGE.cardTopY / STAGE.height) * 100}%`,
-              transform: 'translateX(-50%)',
-              minHeight: '380px',
-            }}
-          >
-            {/* Header / Brand */}
-            <div className="px-8 pt-8 flex justify-between items-start">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-white font-bold text-lg">
-                  A
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-800 leading-tight">
-                    Acme Corp
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    {hasAtlas ? 'Incorporated in Delaware' : 'Sole Proprietorship'}
-                  </p>
-                </div>
-              </div>
-              {hasAtlas && <Globe className="text-slate-300" size={24} />}
-            </div>
-
-            {/* Content Slots */}
-            <div className="p-8 flex-1 flex flex-col gap-6">
-              <MetricSlot
-                activeProducts={activeProducts}
-                revenue={revenue}
-              />
-              <GraphVisualizer activeProducts={activeProducts} />
-              <FooterSlot activeProducts={activeProducts} />
-            </div>
-
-            {/* Empty State Overlay */}
-            <AnimatePresence>
-              {activeProducts.length === 0 && (
-                <motion.div
-                  initial={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-white/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center text-slate-400"
-                >
-                  <BarChart3 size={48} className="mb-4 opacity-20" />
-                  <p className="font-medium">Add products to build your stack</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+          <CentralCard activeProducts={activeProducts} />
         </div>
       </main>
     </div>
