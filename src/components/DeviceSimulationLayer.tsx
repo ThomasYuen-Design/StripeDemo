@@ -142,6 +142,7 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRippl
 
               {/* Data Flow Particle (White/Bright Dash) */}
               <motion.path
+                key={`${id}-particle-${isBoosted}`}
                 d={path}
                 fill="none"
                 stroke={isBoosted ? "#fff" : "#635BFF"}
@@ -152,7 +153,7 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRippl
                 animate={{ strokeDashoffset: -154, opacity: 1 }}
                 transition={{
                   strokeDashoffset: {
-                    duration: 1.5,
+                    duration: isBoosted ? 0.8 : 1.5,
                     repeat: Infinity,
                     ease: "linear"
                   },
