@@ -75,7 +75,7 @@ export const PRODUCTS: ProductConfig[] = [
     icon: Users,
     iconOutline: ConnectOutline,
     iconFilled: ConnectFilled,
-    color: '#0048E5',
+    color: '#0073E6',
     description: 'Payments for platforms and marketplaces'
   },
   {

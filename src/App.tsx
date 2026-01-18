@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProductIcon } from '@/components/ProductIcon';
 import { GradientPath } from '@/components/GradientPath';
-import { MoneyFlowAnimation } from '@/components/MoneyFlowAnimation';
 import { CentralCard } from '@/components/CentralCard';
 import { ConnectSimulationLayer } from '@/components/ConnectSimulationLayer';
 import { DeviceSimulationLayer } from '@/components/DeviceSimulationLayer';
@@ -264,10 +263,6 @@ export default function App() {
           })}
 
             {/* Simulation Layers */}
-            <MoneyFlowAnimation 
-              isActive={activeProducts.includes('connect')} 
-              activeProducts={activeProducts}
-            />
             <ConnectSimulationLayer isActive={activeProducts.includes('connect')} />
             <GlobalPayoutsSimulationLayer isActive={activeProducts.includes('globalPayouts')} />
             <TaxSimulationLayer isActive={activeProducts.includes('tax')} />

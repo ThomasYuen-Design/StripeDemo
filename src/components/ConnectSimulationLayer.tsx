@@ -1,14 +1,15 @@
-import { useState } from 'react';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { Store, Car, User } from 'lucide-react';
 import { STAGE } from '@/config/products';
+import ConnectIcon from '@/assets/svgexport-100.svg';
 
 interface ConnectSimulationLayerProps {
   isActive: boolean;
 }
 
 export const ConnectSimulationLayer = ({ isActive }: ConnectSimulationLayerProps) => {
-  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+
 
   // Position: To the right of the central card
   // Card ends at center(700) + 300 = 1000.
@@ -51,7 +52,11 @@ export const ConnectSimulationLayer = ({ isActive }: ConnectSimulationLayerProps
                  borderColor: 'rgba(99, 91, 255, 0.3)', // Light blurple
                }}
             >
-               <div className="absolute top-4 right-4 text-xs font-semibold text-[#635BFF] bg-[#635BFF]/10 px-2 py-1 rounded">
+               <div 
+                 className="absolute top-4 right-4 flex items-center gap-1.5 text-xs font-semibold text-[#635BFF] border px-2 py-1 rounded-full"
+                 style={{ borderColor: 'rgba(99, 91, 255, 0.3)' }}
+               >
+                 <img src={ConnectIcon} alt="" className="w-4 h-4" />
                  Connect
                </div>
             </motion.div>
@@ -60,37 +65,71 @@ export const ConnectSimulationLayer = ({ isActive }: ConnectSimulationLayerProps
             <svg className="absolute inset-0 w-full h-full overflow-visible">
               {NODES.map((node) => {
                  const start = { x: START_X, y: CENTER_Y };
-                 // const end = { x: START_X + 130, y: CENTER_Y + node.yOffset }; // Unused
-                 
-                 // Box x = 1050. Width=280. Center X is approx 1190.
-                 const nodeX = START_X + 50 + 60; // Left padding in box
+                 const nodeX = START_X + 50 + 60; 
                  const nodeY = CENTER_Y + node.yOffset;
                  
-                 // Control Point for slight curve
-                 const cp1 = { x: (start.x + nodeX) / 2, y: start.y };
-                 const cp2 = { x: (start.x + nodeX) / 2, y: nodeY };
-
-                 // Path: Cubic Bezier or just Line-Line-Line?
-                 // PRD says "Radial/Tree structure".
-                 // Let's do a smooth curve.
-                 const pathD = `M ${start.x} ${start.y} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y}, ${nodeX} ${nodeY}`;
-
-                 const isHovered = hoveredNode === node.id;
-                 const isDimmed = hoveredNode && !isHovered;
+                 // Orthogonal Path Generation (Horizontal -> Vertical -> Horizontal)
+                 // Shift branching point (midX) closer to nodes to avoid overlap with dashed box
+                 const midX = nodeX - 30; // Branch 30px before the icon
+                 const cornerRadius = 20;
+                 
+                 // Check if straight line
+                 const isStraight = Math.abs(start.y - nodeY) < 1;
+                 
+                 let pathD = '';
+                 
+                 if (isStraight) {
+                    pathD = `M ${start.x} ${start.y} L ${nodeX} ${nodeY}`;
+                 } else {
+                    const direction = nodeY > start.y ? 1 : -1;
+                    const safeRadius = Math.min(cornerRadius, Math.abs(midX - start.x) / 2);
+                    
+                    // M start -> L mid-r, startY -> Q mid, startY mid, startY+r -> L mid, endY-r -> Q mid, endY mid+r, endY -> L end
+                    pathD = `
+                      M ${start.x} ${start.y}
+                      L ${midX - safeRadius} ${start.y}
+                      Q ${midX} ${start.y} ${midX} ${start.y + (safeRadius * direction)}
+                      L ${midX} ${nodeY - (safeRadius * direction)}
+                      Q ${midX} ${nodeY} ${midX + safeRadius} ${nodeY}
+                      L ${nodeX} ${nodeY}
+                    `;
+                 }
 
                  return (
                    <g key={node.id}>
-                     {/* Connection Line */}
+                     {/* Base Path (Rail) */}
                      <motion.path
                        d={pathD}
                        fill="none"
-                       stroke={isHovered ? '#00D4FF' : '#635BFF'} // Cyan on hover, Blurple default
-                       strokeWidth={isHovered ? 3 : 2}
-                       strokeDasharray="6 6"
-                       strokeOpacity={isDimmed ? 0.2 : 1}
-                       initial={{ pathLength: 0 }}
-                       animate={{ pathLength: 1 }}
-                       transition={{ duration: 0.5, delay: node.delay + 0.3 }} // Wait for expansion
+                       stroke="#cbd5e1" // Slate 300
+                       strokeWidth="2"
+                       strokeOpacity={0.4}
+                       initial={{ pathLength: 0, opacity: 0 }}
+                       animate={{ pathLength: 1, opacity: 0.4 }}
+                       transition={{ duration: 0.5, delay: node.delay + 0.3 }}
+                     />
+                     
+                     {/* Data Flow Particle */}
+                     <motion.path
+                        d={pathD}
+                        fill="none"
+                        stroke="#0073E6"
+                        strokeWidth="2"
+                        strokeDasharray="4 120"
+                        strokeLinecap="round"
+                        initial={{ strokeDashoffset: 0, opacity: 0 }}
+                        animate={{ 
+                            strokeDashoffset: -124, 
+                            opacity: 1 
+                        }}
+                        transition={{
+                          strokeDashoffset: {
+                            duration: 1.5,
+                            repeat: Infinity,
+                            ease: "linear"
+                          },
+                          opacity: { duration: 0.3, delay: node.delay + 0.5 }
+                        }}
                      />
                    </g>
                  );
@@ -113,16 +152,11 @@ export const ConnectSimulationLayer = ({ isActive }: ConnectSimulationLayerProps
                      left: nodeX,
                      top: nodeY - 24, // Center vertically (height 48)
                    }}
-                   onMouseEnter={() => setHoveredNode(node.id)}
-                   onMouseLeave={() => setHoveredNode(null)}
                  >
                     <div className="flex items-center gap-3">
                        {/* Avatar Circle */}
-                       <div className={`
-                          w-12 h-12 rounded-full border-2 bg-white flex items-center justify-center shadow-md relative z-10 transition-colors
-                          ${hoveredNode === node.id ? 'border-[#00D4FF]' : 'border-slate-200'}
-                       `}>
-                          <node.icon className={`w-5 h-5 ${hoveredNode === node.id ? 'text-[#00D4FF]' : 'text-slate-500'}`} />
+                       <div className="w-12 h-12 rounded-full border-2 border-slate-200 bg-white flex items-center justify-center shadow-md relative z-10 transition-colors">
+                          <node.icon className="w-5 h-5 text-slate-500" />
                           
                           {/* Status Dot */}
                           <div className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm">
@@ -136,33 +170,6 @@ export const ConnectSimulationLayer = ({ isActive }: ConnectSimulationLayerProps
                           <span className="text-xs text-slate-500">{node.sub}</span>
                        </div>
                     </div>
-
-                    {/* Tooltip (Hover State) */}
-                    <AnimatePresence>
-                      {hoveredNode === node.id && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10, x: 20 }}
-                          animate={{ opacity: 1, y: 0, x: 20 }}
-                          exit={{ opacity: 0, y: 5 }}
-                          className="absolute left-full top-0 ml-4 w-64 bg-slate-900/95 text-white p-4 rounded-xl shadow-xl backdrop-blur-md z-50 pointer-events-none"
-                        >
-                           <div className="flex items-center justify-between mb-2">
-                              <span className="text-sm font-bold text-slate-100">{node.label} Account</span>
-                              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-medium border border-emerald-500/30">Verified</span>
-                           </div>
-                           <div className="space-y-2 text-xs text-slate-400">
-                              <div className="flex justify-between">
-                                 <span>Last Payout</span>
-                                 <span className="text-white">Instant (Debit)</span>
-                              </div>
-                              <div className="flex justify-between border-t border-slate-700 pt-2">
-                                 <span>Platform Fee</span>
-                                 <span className="text-[#00D4FF]">15.0%</span>
-                              </div>
-                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
                  </motion.div>
                );
             })}
