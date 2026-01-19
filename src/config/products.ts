@@ -39,7 +39,7 @@ export const PRODUCTS: ProductConfig[] = [
     icon: CreditCard,
     iconOutline: PaymentOutline,
     iconFilled: PaymentFilled,
-    color: '#635BFF',
+    color: '#11EFE3',
     description: 'Accept payments online and in person'
   },
   {
@@ -48,7 +48,7 @@ export const PRODUCTS: ProductConfig[] = [
     icon: CreditCard,
     iconOutline: TerminalOutline,
     iconFilled: TerminalFilled,
-    color: '#00D4FF',
+    color: '#11EFE3',
     description: 'Accept in-person payments'
   },
   {
@@ -57,7 +57,7 @@ export const PRODUCTS: ProductConfig[] = [
     icon: ShieldCheck,
     iconOutline: RadarOutline,
     iconFilled: RadarFilled,
-    color: '#FF424D',
+    color: '#E03071',
     description: 'Fight fraud with machine learning'
   },
   {
@@ -66,7 +66,7 @@ export const PRODUCTS: ProductConfig[] = [
     icon: Fingerprint, // Using Fingerprint as a reasonable placeholder for Auth/Identity
     iconOutline: AuthorizationBoostOutline,
     iconFilled: AuthorizationBoostFilled,
-    color: '#E31C5F', // Based on SVG gradient
+    color: '#11EFE3', // Based on SVG gradient
     description: 'Smarter authorization decisions'
   },
   {
@@ -84,7 +84,7 @@ export const PRODUCTS: ProductConfig[] = [
     icon: Globe,
     iconOutline: GlobalPayoutsOutline,
     iconFilled: GlobalPayoutsFilled,
-    color: '#E03071', // Based on SVG gradient
+    color: '#0073E6', // Based on SVG gradient
     description: 'Send payouts globally'
   },
   {
@@ -93,7 +93,7 @@ export const PRODUCTS: ProductConfig[] = [
     icon: Repeat,
     iconOutline: BillingOutline,
     iconFilled: BillingFilled,
-    color: '#00D4FF',
+    color: '#00D924',
     description: 'Build and manage recurring revenue'
   },
   {
@@ -102,7 +102,7 @@ export const PRODUCTS: ProductConfig[] = [
     icon: Leaf,
     iconOutline: TaxOutline,
     iconFilled: TaxFilled,
-    color: '#00D924',
+    color: '#E03071',
     description: 'Calculate and collect sales tax'
   },
 ];

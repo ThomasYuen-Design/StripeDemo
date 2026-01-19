@@ -11,9 +11,20 @@ export const GraphVisualizer = ({ data, height = 120, width = 360 }: GraphVisual
   const pathData = useMemo(() => {
     if (data.length === 0) return { line: '', area: '' };
 
-    const max = 180; // Fixed max
-    const min = 50;  // Fixed min
-    const range = max - min;
+    // Dynamic scaling based on data
+    const rawMax = Math.max(...data);
+    const rawMin = Math.min(...data);
+    const rawRange = rawMax - rawMin;
+    
+    // Ensure we have a minimum range so flat graphs look okay and don't jitter
+    const minVisibleRange = 20; 
+    const effectiveRange = Math.max(rawRange, minVisibleRange);
+    
+    // Add 15% buffer to top and bottom
+    const buffer = effectiveRange * 0.15;
+    const max = rawMax + buffer;
+    const min = rawMin - buffer;
+    const range = max - min || 1; // Avoid division by zero
     
     // We want the graph to occupy the bottom 40-50% mainly, but let's just scale to container
     // Padding to avoid clipping strokes

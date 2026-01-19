@@ -125,9 +125,6 @@ export const CentralCard = ({ activeProducts }: CentralCardProps) => {
             <h3 className="text-lg font-bold text-slate-800 leading-tight">
               Acme Corp
             </h3>
-            <p className="text-xs text-slate-500">
-              Sole Proprietorship
-            </p>
           </div>
         </div>
       </div>
