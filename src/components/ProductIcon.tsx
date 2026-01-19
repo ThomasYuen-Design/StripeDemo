@@ -93,15 +93,39 @@ export const ProductIcon = ({
           <AnimatePresence>
             {showFilled && (
               <motion.div
-                className="absolute bottom-2 flex items-center justify-center"
+                className="absolute bottom-2 flex items-center justify-center w-[52px]"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 8 }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
               >
-                <span className="text-[10px] font-semibold text-slate-900">
-                  {product.label}
-                </span>
+                {product.label.length > 12 ? (
+                  <div className="flex overflow-hidden mask-linear-fade w-full">
+                    <motion.div
+                      className="flex"
+                      animate={{ x: '-50%' }}
+                      transition={{
+                        repeat: Infinity,
+                        ease: 'linear',
+                        duration: 5,
+                        repeatType: "loop",
+                        repeatDelay: 1.5
+                      }}
+                      style={{ width: "fit-content" }}
+                    >
+                      <span className="text-[10px] font-semibold text-slate-900 whitespace-nowrap pr-4">
+                        {product.label}
+                      </span>
+                      <span className="text-[10px] font-semibold text-slate-900 whitespace-nowrap pr-4">
+                        {product.label}
+                      </span>
+                    </motion.div>
+                  </div>
+                ) : (
+                  <span className="text-[10px] font-semibold text-slate-900 whitespace-nowrap">
+                    {product.label}
+                  </span>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

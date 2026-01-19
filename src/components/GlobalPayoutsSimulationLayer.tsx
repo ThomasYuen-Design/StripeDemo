@@ -20,9 +20,9 @@ type RecipientNode = {
 
 // Distribute nodes vertically this time to fit under Connect
 const RECIPIENTS: RecipientNode[] = [
-  { id: 'supplier-a', flag: '🇨🇳', currency: 'CNY', label: 'Supplier A', countryCode: 'CN', xOffset: 0, yOffset: 40, delay: 0 },
-  { id: 'contractor-b', flag: '🇬🇧', currency: 'GBP', label: 'Contractor B', countryCode: 'UK', xOffset: 0, yOffset: 120, delay: 0.1 },
-  { id: 'vendor-c', flag: '🇪🇺', currency: 'EUR', label: 'Vendor C', countryCode: 'EU', xOffset: 0, yOffset: 200, delay: 0.2 },
+  { id: 'supplier-a', flag: '🇨🇳', currency: 'CNY', label: 'Supplier A', countryCode: 'CN', xOffset: 0, yOffset: 55, delay: 0 },
+  { id: 'contractor-b', flag: '🇬🇧', currency: 'GBP', label: 'Contractor B', countryCode: 'UK', xOffset: 0, yOffset: 155, delay: 0.1 },
+  { id: 'vendor-c', flag: '🇪🇺', currency: 'EUR', label: 'Vendor C', countryCode: 'EU', xOffset: 0, yOffset: 255, delay: 0.2 },
 ];
 
 const getGradient = () => {
@@ -39,7 +39,7 @@ export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulati
   // Connect Section ends roughly at Y = 710 (Top 310 + Height 400)
   
   const SECTION_LEFT = STAGE.cardCenterX + 350; // Aligned with Connect
-  const SECTION_TOP = 600; // Just below Connect
+  const SECTION_TOP = 536; // Just below Connect
   
   // Pipeline Routing (Bus Style)
   // PIPE_Y is now the vertical center of the middle recipient (Contractor B)
@@ -98,7 +98,7 @@ export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulati
              {/* Container Box (Dashed) */}
              <motion.div
                 initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 280 }}
+                animate={{ opacity: 1, height: 336 }}
                 exit={{ opacity: 0, height: 0 }}
                 className="absolute border-2 border-dashed rounded-3xl bg-slate-50/50"
                 style={{

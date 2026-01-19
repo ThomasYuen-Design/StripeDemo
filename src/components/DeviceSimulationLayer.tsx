@@ -402,7 +402,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
                  />
               </svg>
               {/* Billing Header */}
-              <div className="absolute -top-10 left-0 flex items-center gap-2">
+              <div className="absolute -top-6 left-0 flex items-center gap-2">
                  <img src={billingIcon} alt="Billing" className="w-4 h-4" />
                  <span className="text-[#F3C623] font-semibold text-xs tracking-wide">Recurring billing</span>
               </div>
