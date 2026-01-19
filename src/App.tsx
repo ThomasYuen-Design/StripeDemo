@@ -6,7 +6,7 @@ import { CentralCard } from '@/components/CentralCard';
 import { ConnectSimulationLayer } from '@/components/ConnectSimulationLayer';
 import { DeviceSimulationLayer } from '@/components/DeviceSimulationLayer';
 import { GlobalPayoutsSimulationLayer } from '@/components/GlobalPayoutsSimulationLayer';
-import { TaxSimulationLayer } from '@/components/TaxSimulationLayer';
+
 import { PRODUCTS, PRESETS, STAGE, getIconPosition } from '@/config/products';
 import { generateOrthogonalPath } from '@/utils/pathGeneration';
 import type { ProductId, PresetType } from '@/types';
@@ -32,9 +32,9 @@ export default function App() {
       }
 
       if (id === 'payments' && isActive) {
-        // If turning Payments OFF, check if Connect or Global Payouts or Billing or Tax is ON
-        if (newProducts.includes('connect') || newProducts.includes('globalPayouts') || newProducts.includes('billing') || newProducts.includes('tax')) {
-           console.warn("Cannot turn off Payments while Connect, Global Payouts, Billing, or Tax is active");
+        // If turning Payments OFF, check if Connect or Global Payouts or Billing is ON
+        if (newProducts.includes('connect') || newProducts.includes('globalPayouts') || newProducts.includes('billing')) {
+           console.warn("Cannot turn off Payments while Connect, Global Payouts, or Billing is active");
            return prev;
         }
       }
@@ -56,11 +56,6 @@ export default function App() {
 
       // Logic: Billing requires Payments
       if (id === 'billing' && !isActive && !newProducts.includes('payments')) {
-        newProducts.push('payments');
-      }
-
-      // Logic: Tax requires Payments
-      if (id === 'tax' && !isActive && !newProducts.includes('payments')) {
         newProducts.push('payments');
       }
 
@@ -264,7 +259,6 @@ export default function App() {
             {/* Simulation Layers */}
             <ConnectSimulationLayer isActive={activeProducts.includes('connect')} />
             <GlobalPayoutsSimulationLayer isActive={activeProducts.includes('globalPayouts')} />
-            <TaxSimulationLayer isActive={activeProducts.includes('tax')} />
             <DeviceSimulationLayer activeProducts={activeProducts} />
 
 

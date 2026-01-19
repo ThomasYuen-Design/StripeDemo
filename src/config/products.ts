@@ -3,7 +3,6 @@ import {
   Repeat,
   ShieldCheck,
   Users,
-  Leaf,
   Globe,
   Fingerprint,
   Activity,
@@ -21,8 +20,6 @@ import {
   RadarFilled,
   TerminalOutline,
   TerminalFilled,
-  TaxOutline,
-  TaxFilled,
   AuthorizationBoostOutline,
   AuthorizationBoostFilled,
   GlobalPayoutsOutline,
@@ -96,15 +93,6 @@ export const PRODUCTS: ProductConfig[] = [
     color: '#00D924',
     description: 'Build and manage recurring revenue'
   },
-  {
-    id: 'tax',
-    label: 'Tax',
-    icon: Leaf,
-    iconOutline: TaxOutline,
-    iconFilled: TaxFilled,
-    color: '#E03071',
-    description: 'Calculate and collect sales tax'
-  },
 ];
 
 /**
@@ -144,10 +132,19 @@ export const STAGE: StageDimensions = {
 
 /**
  * Calculate icon position on the stage grid
+ * Icons are 64px wide and centered on x,y coordinates
+ * Left edge of first icon at 350px, right edge of last icon at 1050px
  */
 export const getIconPosition = (index: number): { x: number; y: number } => {
-  const totalWidth = 600;
-  const startX = (STAGE.width - totalWidth) / 2;
+  const iconWidth = 64;
+  const leftDashedLine = 350;
+  const rightDashedLine = 1050;
+  
+  // Center positions adjusted for icon width
+  const startX = leftDashedLine + (iconWidth / 2); // 382px
+  const endX = rightDashedLine - (iconWidth / 2); // 1018px
+  const totalWidth = endX - startX; // 636px
+  
   const step = totalWidth / (PRODUCTS.length > 1 ? PRODUCTS.length - 1 : 1);
 
   return {
