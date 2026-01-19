@@ -108,12 +108,9 @@ export default function App() {
         </div>
       </header>
 
-      <main className="flex-1 relative flex flex-col items-center justify-start pt-8 pb-20 overflow-y-auto">
+      <main className="flex-1 relative flex flex-col items-center justify-start pt-4 pb-20 overflow-y-auto">
         {/* Presets */}
-        <div className="flex flex-col items-center gap-4 relative z-40 mb-8">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Example Stacks
-          </span>
+        <div className="flex flex-col items-center gap-4 relative z-40 mb-4">
           <div className="flex flex-wrap justify-center gap-3">
             {PRESETS.map((preset) => (
               <button

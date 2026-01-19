@@ -15,7 +15,7 @@ export const ConnectSimulationLayer = ({ isActive }: ConnectSimulationLayerProps
   // Card ends at center(700) + 300 = 1000.
   // Connect Box starts at 1050?
   const START_X = STAGE.cardCenterX + 300; 
-  const CENTER_Y = 510;
+  const CENTER_Y = 380; // Aligns box top (CENTER_Y - 140) with Card Top (240)
   
   // Nodes Config
   const NODES = [

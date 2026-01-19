@@ -262,7 +262,6 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
 
   // Config
   const POS_X = 140;
-  const CENTER_Y = 510;
   const STACK_OFFSET = 150; 
   
   // Dimensions
@@ -270,9 +269,12 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
   const DEVICE_HEIGHT = DEVICE_WIDTH * 1.6; // 192
 
   // Logic
-  // Logic
   const isStacked = showPhone && showTerminal;
   const [effectivelyStacked, setEffectivelyStacked] = useState(isStacked);
+
+  // Dynamic Center: Single (416) vs Stacked (566)
+  // This ensures the Phone stays at Y=416, and Terminal appears below it.
+  const activeCenterY = effectivelyStacked ? 566 : 416;
 
   useEffect(() => {
     if (isStacked) {
@@ -285,29 +287,32 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
     }
   }, [isStacked]);
 
-  const phoneY = effectivelyStacked ? CENTER_Y - STACK_OFFSET : CENTER_Y;
-  const terminalY = effectivelyStacked ? CENTER_Y + STACK_OFFSET : CENTER_Y;
+  const phoneY = effectivelyStacked ? activeCenterY - STACK_OFFSET : activeCenterY;
+  const terminalY = effectivelyStacked ? activeCenterY + STACK_OFFSET : activeCenterY;
   
-  const stackedPhoneTargetY = CENTER_Y - 50; 
-  const stackedTerminalTargetY = CENTER_Y + 50;
+  // Card Connection Targets (Approx Card Center)
+  const CARD_CENTER_Y = STAGE.cardTopY + 190;
   
-  const phoneTargetY = (showPhone && effectivelyStacked) ? stackedPhoneTargetY : CENTER_Y;
-  const terminalTargetY = (showTerminal && effectivelyStacked) ? stackedTerminalTargetY : CENTER_Y;
+  // Phone should always go straight (Target Y = Source Y) to avoid "heart signal" bump
+  const stackedTerminalTargetY = CARD_CENTER_Y + 40;
+  
+  const phoneTargetY = phoneY;
+  const terminalTargetY = (showTerminal && effectivelyStacked) ? stackedTerminalTargetY : CARD_CENTER_Y;
   
   // Calculate Frame Bounds
   const PADDING = 20;
   const HEADER_HEIGHT = 40;
   
-  let contentTopY = CENTER_Y;
-  let contentBottomY = CENTER_Y;
+  let contentTopY = activeCenterY;
+  let contentBottomY = activeCenterY;
 
   if (effectivelyStacked) {
       contentTopY = phoneY - (DEVICE_HEIGHT / 2); // Top of phone
       contentBottomY = terminalY + (DEVICE_HEIGHT / 2); // Bottom of terminal
   } else if (showPhone || showTerminal) {
       // Single device centered
-      contentTopY = CENTER_Y - (DEVICE_HEIGHT / 2);
-      contentBottomY = CENTER_Y + (DEVICE_HEIGHT / 2);
+      contentTopY = activeCenterY - (DEVICE_HEIGHT / 2);
+      contentBottomY = activeCenterY + (DEVICE_HEIGHT / 2);
   }
 
   const frameTop = contentTopY - PADDING - HEADER_HEIGHT;
@@ -423,8 +428,8 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   className="absolute z-30 w-12 h-12 flex items-center justify-center backdrop-blur-md rounded-xl"
                   style={{
-                     left: 350, // Matches the new midX shift point
-                     top: CENTER_Y - 24, // Centered
+                     left: 325, // Centered in gap (300-400) - (Icon Width 48 / 2)
+                     top: phoneY - 60, // Position above the payment line (consistent regardless of stack)
                   }}
                >
                   <img src={authBoostIcon} alt="Authorization Boost" className="w-full h-full" />

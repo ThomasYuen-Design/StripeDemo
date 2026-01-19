@@ -39,7 +39,7 @@ export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulati
   // Connect Section ends roughly at Y = 710 (Top 310 + Height 400)
   
   const SECTION_LEFT = STAGE.cardCenterX + 350; // Aligned with Connect
-  const SECTION_TOP = 730; // Just below Connect
+  const SECTION_TOP = 600; // Just below Connect
   
   // Pipeline Routing (Bus Style)
   // PIPE_Y is now the vertical center of the middle recipient (Contractor B)

@@ -9,7 +9,7 @@ interface TaxSimulationLayerProps {
 export const TaxSimulationLayer = ({ isActive }: TaxSimulationLayerProps) => {
   // Config
   const SIPHON_X = 360; // Configured to tap into the main line
-  const MAIN_LINE_Y = 510; // Center Y where the main line runs
+  const MAIN_LINE_Y = 416; // Center Y where the main line runs
   const TAX_NODE_Y = 800; // Where the tax engine sits
   const REMITTANCE_Y = 880; // Official Entity below
 
