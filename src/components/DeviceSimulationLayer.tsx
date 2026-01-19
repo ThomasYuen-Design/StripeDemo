@@ -76,7 +76,8 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, isBooste
   if (Math.abs(pos.targetY - startY) < 5) {
       path = `M ${startX} ${startY} L ${cardLeftEdge - 8} ${startY}`;
   } else {
-      const midX = startX + (cardLeftEdge - startX) * 0.75;
+      // Align vertical segment with 25% grid line (350px)
+      const midX = STAGE.width / 4; // 350px - aligns with background dashed line
       const cornerRadius = 20;
       const safeCornerRadius = Math.min(cornerRadius, Math.abs(midX - startX) / 2);
       const verticalDir = pos.targetY > startY ? 1 : -1;
@@ -260,12 +261,13 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
   const showAuthBoost = activeProducts.includes('authorizationBoost');
   const showBilling = activeProducts.includes('billing');
 
-  // Config
-  const POS_X = 140;
-  const STACK_OFFSET = 150; 
+  // Config - Center of first grid column (12.5% of 1400px = 175px)
+  const COLUMN_CENTER_X = (STAGE.width / 8); // 175px
+  const DEVICE_WIDTH = 120;
+  const POS_X = COLUMN_CENTER_X - (DEVICE_WIDTH / 2); // 175 - 60 = 115px
+  const STACK_OFFSET = 150;
   
   // Dimensions
-  const DEVICE_WIDTH = 120;
   const DEVICE_HEIGHT = DEVICE_WIDTH * 1.6; // 192
 
   // Logic

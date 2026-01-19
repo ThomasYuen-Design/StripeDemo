@@ -102,7 +102,7 @@ export const CentralCard = ({ activeProducts }: CentralCardProps) => {
         opacity: isActive ? 1 : 0.8,
         filter: isActive ? 'grayscale(0%)' : 'grayscale(100%)',
         boxShadow: isActive 
-            ? '0 20px 50px -12px rgba(99, 91, 255, 0.25)' 
+            ? '0 20px 50px -12px rgba(30, 30, 30, 0.25)' 
             : '0 10px 30px -10px rgba(0,0,0,0.1)',
         backgroundColor: isActive ? '#FFFFFF' : '#F8FAFC' 
       }}
