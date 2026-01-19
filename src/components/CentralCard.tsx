@@ -15,7 +15,7 @@ const INITIAL_REVENUE = 39274.29;
 export const CentralCard = ({ activeProducts }: CentralCardProps) => {
   const [revenue, setRevenue] = useState(0);
   const [data, setData] = useState<number[]>([]);
-  const [isWakingUp, setIsWakingUp] = useState(false);
+
   const [trend, setTrend] = useState("+4.2%");
   
   const prevActiveCount = useRef(0);
@@ -42,14 +42,13 @@ export const CentralCard = ({ activeProducts }: CentralCardProps) => {
       // Reset state when inactive
       setRevenue(0);
       setData([]);
-      setIsWakingUp(false);
+
       setTrend("+4.2%");
       return;
     }
 
     // "Wake Up" Sequence
-    setIsWakingUp(true);
-    let currentRevenue = 0;
+
     const targetRevenue = INITIAL_REVENUE;
     
     // Animate revenue count up quickly
@@ -68,7 +67,7 @@ export const CentralCard = ({ activeProducts }: CentralCardProps) => {
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
-        setIsWakingUp(false);
+
       }
     });
 

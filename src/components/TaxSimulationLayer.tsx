@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { PieChart, Landmark } from 'lucide-react';
-import { STAGE } from '@/config/products';
+
 
 interface TaxSimulationLayerProps {
   isActive: boolean;
