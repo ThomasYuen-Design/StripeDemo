@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Repeat } from 'lucide-react';
 import paymentPhone from '@/assets/payment-phone.png';
 import terminalPos from '@/assets/images/terminal-POS.png';
 import fraudIcon from '@/assets/Fraud-detection.svg';
 import authBoostIcon from '@/assets/images/Credit-Safe.svg';
+import billingIcon from '@/assets/svgexport-128.svg';
 import { STAGE } from '@/config/products';
 import { ProductId } from '@/types';
 
@@ -26,6 +26,8 @@ interface SimulationDeviceProps {
   isVisible: boolean;
   hasRipple?: boolean;
   isBoosted?: boolean;
+  hasBilling?: boolean;
+  hasRadar?: boolean;
 }
 
 const DeviceRipple = () => {
@@ -44,12 +46,13 @@ const DeviceRipple = () => {
     />
   );
 };
-const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRipple, isBoosted }: SimulationDeviceProps) => {
+const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRipple, isBoosted, hasBilling, hasRadar }: SimulationDeviceProps) => {
   const [internalVisible, setInternalVisible] = useState(isVisible);
   const [isLineReady, setIsLineReady] = useState(false);
   
   // Local state to "freeze" position during exit
   const [pos, setPos] = useState({ y, targetY });
+
 
   useEffect(() => {
     if (isVisible) {
@@ -65,6 +68,17 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRippl
       return () => clearTimeout(timer);
     }
   }, [isVisible, y, targetY]);
+
+  // Radar Animation Randomness Generator
+  const [radarCycle, setRadarCycle] = useState(0);
+  const radarParams = useMemo(() => {
+    // Random Start Delay (0.5s to 3s) for "More Random Appearance"
+    const delay = Math.random() * 2.5 + 0.5;
+    // Random Stop Distance (80px to 180px)
+    const stopDist = -(Math.random() * 100 + 80);
+    return { delay, stopDist };
+  }, [radarCycle]);
+  
   
   const ASPECT_RATIO = 1.6;
   const height = width * ASPECT_RATIO;
@@ -82,7 +96,7 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRippl
   if (Math.abs(pos.targetY - startY) < 5) {
       path = `M ${startX} ${startY} L ${cardLeftEdge - 8} ${startY}`;
   } else {
-      const midX = (startX + cardLeftEdge) / 2;
+      const midX = startX + (cardLeftEdge - startX) * 0.75;
       const cornerRadius = 20;
       const safeCornerRadius = Math.min(cornerRadius, Math.abs(midX - startX) / 2);
       const verticalDir = pos.targetY > startY ? 1 : -1;
@@ -161,8 +175,66 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRippl
                 }}
                 style={{ filter: 'drop-shadow(0 0 2px rgba(99,91,255,0.5))' }}
               />
+
+              {/* Billing Particles (Occasional Yellow) */}
+              {hasBilling && (
+                <motion.path
+                  key={`${id}-particle-billing`}
+                  d={path}
+                  fill="none"
+                  stroke="#F3C623"
+                  strokeWidth="2"
+                  strokeDasharray="4 350" // Sparse yellow dots
+                  strokeLinecap="round"
+                  initial={{ strokeDashoffset: 0, opacity: 0 }}
+                  animate={{ strokeDashoffset: -354, opacity: 1 }}
+                  transition={{
+                    strokeDashoffset: {
+                      duration: 2.5, // Different speed or just synced? Let's sync speed somewhat but with different period
+                      repeat: Infinity,
+                      ease: "linear"
+                    },
+                    opacity: { duration: 0.3 }
+                  }}
+                  style={{ filter: 'drop-shadow(0 0 2px rgba(243, 198, 35, 0.5))' }}
+                />
+              )}
+
+              {/* Radar Particles (Red - Move, Stop, Flash, Disappear) */}
+              {hasRadar && (
+                <motion.path
+                  key={`${id}-particle-radar-${radarCycle}`} // Re-mounts on cycle change for new randoms
+                  d={path}
+                  fill="none"
+                  stroke="#FF4842" 
+                  strokeWidth="3"
+                  strokeDasharray="4 1000" // Ensure single dot
+                  strokeLinecap="round"
+                  initial={{ strokeDashoffset: 0, opacity: 0 }}
+                  animate={{ 
+                    strokeDashoffset: [0, radarParams.stopDist, radarParams.stopDist, radarParams.stopDist], 
+                    opacity: [0, 1, 1, 0.3, 1, 0] // Fade In -> Hold -> Flash (Dim->Bright) -> Out
+                  }}
+                  transition={{
+                    strokeDashoffset: {
+                        duration: 2, 
+                        times: [0, 0.4, 0.7, 1],
+                        ease: "easeInOut"
+                    },
+                    opacity: {
+                        duration: 2,
+                        times: [0, 0.1, 0.7, 0.8, 0.9, 1], // Sync with stop
+                        ease: "linear"
+                    },
+                    delay: radarParams.delay, // Random start delay
+                  }}
+                  onAnimationComplete={() => setRadarCycle(c => c + 1)}
+                />
+              )}
             </svg>
           )}
+
+
 
           {/* Device Image Container */}
           <motion.div
@@ -302,6 +374,11 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
              >
                <path d="M 0 0 L 10 5 L 0 10 z" fill="#9966FF" />
              </marker>
+             <linearGradient id="fraud-particle-gradient" gradientUnits="objectBoundingBox" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#FF4842" />
+                <stop offset="75%" stopColor="#FF4842" />
+                <stop offset="100%" stopColor="transparent" />
+             </linearGradient>
           </defs>
        </svg>
 
@@ -340,9 +417,10 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
                     }}
                  />
               </svg>
-              {/* Loop Indicator Icon */}
-              <div className="absolute -top-3 -right-3 bg-white p-1 rounded-full shadow-md border border-[#F3C623]">
-                 <Repeat className="w-4 h-4 text-[#F3C623]" />
+              {/* Billing Header */}
+              <div className="absolute -top-10 left-0 flex items-center gap-2">
+                 <img src={billingIcon} alt="Billing" className="w-4 h-4" />
+                 <span className="text-[#F3C623] font-semibold text-xs tracking-wide">Recurring billing</span>
               </div>
            </motion.div>
          )}
@@ -366,7 +444,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   className="absolute z-30 w-12 h-12 flex items-center justify-center backdrop-blur-md rounded-xl"
                   style={{
-                     left: 310, // Approx midpoint
+                     left: 350, // Matches the new midX shift point
                      top: CENTER_Y - 24, // Centered
                   }}
                >
@@ -421,6 +499,8 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
          isVisible={showPhone}
          hasRipple={showRadar}
          isBoosted={showAuthBoost}
+         hasBilling={showBilling}
+         hasRadar={showRadar}
        />
        
        {/* Terminal */}
@@ -434,6 +514,8 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
          isVisible={showTerminal}
          hasRipple={showRadar}
          isBoosted={showAuthBoost}
+         hasBilling={showBilling}
+         hasRadar={showRadar}
        />
     </div>
   );
