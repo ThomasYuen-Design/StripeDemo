@@ -99,15 +99,16 @@ export const CentralCard = ({ activeProducts }: CentralCardProps) => {
       layout="position"
       initial={{ opacity: 0.5, filter: 'grayscale(100%)' }}
       animate={{ 
-        opacity: isActive ? 1 : 0.8,
+        opacity: isActive ? 1 : 0.6,
         filter: isActive ? 'grayscale(0%)' : 'grayscale(100%)',
         boxShadow: isActive 
             ? '0 20px 50px -12px rgba(30, 30, 30, 0.25)' 
-            : '0 10px 30px -10px rgba(0,0,0,0.1)',
-        backgroundColor: isActive ? '#FFFFFF' : '#F8FAFC' 
+            : 'none',
+        backgroundColor: isActive ? '#FFFFFF' : 'transparent',
+        borderColor: isActive ? 'rgb(226, 232, 240)' : 'rgba(148, 163, 184, 0.5)'
       }}
       transition={{ duration: 0.5 }}
-      className="absolute z-20 w-[90%] md:w-[600px] rounded-3xl border border-slate-200 overflow-hidden flex flex-col"
+      className="absolute z-20 w-[90%] md:w-[600px] rounded-3xl border overflow-hidden flex flex-col"
       style={{
         left: `${(STAGE.cardCenterX / STAGE.width) * 100}%`,
         top: `${(STAGE.cardTopY / STAGE.height) * 100}%`,
@@ -118,13 +119,33 @@ export const CentralCard = ({ activeProducts }: CentralCardProps) => {
       {/* Header / Brand */}
       <div className="px-8 pt-8 flex justify-between items-start">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-white font-bold text-lg">
-            A
-          </div>
+          <motion.div 
+            className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg"
+            animate={{
+              backgroundColor: isActive ? '#0f172a' : 'transparent',
+              color: isActive ? '#ffffff' : '#94a3b8',
+              borderWidth: isActive ? 0 : 2,
+              borderColor: isActive ? 'transparent' : '#94a3b8',
+              WebkitTextStroke: isActive ? '0px' : '1px #94a3b8',
+            }}
+            style={{
+              borderStyle: 'solid',
+            }}
+          >
+            <span style={{ 
+              WebkitTextStroke: isActive ? '0px transparent' : '1px #94a3b8',
+              color: isActive ? '#ffffff' : 'transparent'
+            }}>A</span>
+          </motion.div>
           <div>
-            <h3 className="text-lg font-bold text-slate-800 leading-tight">
+            <motion.h3 
+              className="text-lg font-bold leading-tight"
+              animate={{
+                color: isActive ? '#1e293b' : '#94a3b8'
+              }}
+            >
               Acme Corp
-            </h3>
+            </motion.h3>
           </div>
         </div>
       </div>
@@ -134,7 +155,7 @@ export const CentralCard = ({ activeProducts }: CentralCardProps) => {
         {/* Metric Area */}
         <div className="mb-8">
            <AnimatePresence mode="wait">
-             {isActive ? (
+             {isActive && (
                <motion.div
                  initial={{ opacity: 0, y: 10 }}
                  animate={{ opacity: 1, y: 0 }}
@@ -146,15 +167,6 @@ export const CentralCard = ({ activeProducts }: CentralCardProps) => {
                    trend="+32.8%"
                  />
                </motion.div>
-             ) : (
-                <motion.div
-                 initial={{ opacity: 0 }}
-                 animate={{ opacity: 1 }}
-                 exit={{ opacity: 0 }}
-                 className="h-20 flex items-center text-slate-300 font-medium italic"
-                >
-                   Activate Payments to view data
-                </motion.div>
              )}
            </AnimatePresence>
         </div>

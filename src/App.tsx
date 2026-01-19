@@ -113,15 +113,9 @@ export default function App() {
               <button
                 key={preset.id}
                 onClick={() => applyPreset(preset.id)}
-                className="group relative px-6 py-3 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-600 hover:border-stripe-purple hover:text-stripe-purple hover:shadow-lg transition-all active:scale-95"
+                className="group relative px-6 py-3 bg-transparent rounded-full text-sm font-medium text-slate-500 hover:bg-[#635BFF] hover:text-white focus:bg-[#635BFF] focus:text-white focus:outline-none transition-all active:scale-95"
               >
-                <span className="flex items-center gap-2">
-                  <preset.icon
-                    size={14}
-                    className="group-hover:scale-110 transition-transform"
-                  />
-                  {preset.label}
-                </span>
+                {preset.label}
               </button>
             ))}
           </div>
