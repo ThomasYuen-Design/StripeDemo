@@ -9,9 +9,6 @@ import { STAGE } from '@/config/products';
 import { ProductId } from '@/types';
 
 // Animation Constants
-const CYCLE_DURATION = 3.5; // Total time for one complete loop + pause
-const SWEEP_DELAY = 0.2;    // Sweep starts slightly after icon pulse
-
 interface DeviceSimulationLayerProps {
   activeProducts: ProductId[];
 }
@@ -24,29 +21,12 @@ interface SimulationDeviceProps {
   width: number;
   targetY: number; // Where the line hits the card
   isVisible: boolean;
-  hasRipple?: boolean;
   isBoosted?: boolean;
   hasBilling?: boolean;
   hasRadar?: boolean;
 }
 
-const DeviceRipple = () => {
-  return (
-    <motion.div
-      className="absolute inset-0 bg-white z-20 pointer-events-none mix-blend-overlay"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: [0, 0.4, 0] }}
-      transition={{
-        duration: 0.6,
-        times: [0, 0.2, 1], // fast attack, slow decay
-        repeat: Infinity,
-        repeatDelay: CYCLE_DURATION - 0.6, 
-        delay: SWEEP_DELAY + 0.3, // Approximate time for sweep to hit device
-      }}
-    />
-  );
-};
-const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRipple, isBoosted, hasBilling, hasRadar }: SimulationDeviceProps) => {
+const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, isBoosted, hasBilling, hasRadar }: SimulationDeviceProps) => {
   const [internalVisible, setInternalVisible] = useState(isVisible);
   const [isLineReady, setIsLineReady] = useState(false);
   
@@ -206,7 +186,7 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRippl
                   key={`${id}-particle-radar-${radarCycle}`} // Re-mounts on cycle change for new randoms
                   d={path}
                   fill="none"
-                  stroke="#FF4842" 
+                  stroke="#FF5996" 
                   strokeWidth="3"
                   strokeDasharray="4 1000" // Ensure single dot
                   strokeLinecap="round"
@@ -261,7 +241,6 @@ const SimulationDevice = ({ id, image, x, y, width, targetY, isVisible, hasRippl
             }}
           >
              <div className="w-full h-full relative">
-                {hasRipple && <DeviceRipple />}
                 <img 
                   src={image} 
                   alt={id} 
@@ -480,7 +459,7 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
                     alt="Fraud Detection" 
                     className="w-4 h-4 relative z-10" 
                  />
-                 <span className="text-[#FF5996] font-mono text-[10px] tracking-wider uppercase font-bold relative z-10">
+                 <span className="text-[#FF5996] font-semibold text-xs tracking-wide relative z-10">
                    Fraud Detection
                  </span>
               </div>
@@ -497,7 +476,6 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
          targetY={phoneTargetY}
          width={DEVICE_WIDTH}
          isVisible={showPhone}
-         hasRipple={showRadar}
          isBoosted={showAuthBoost}
          hasBilling={showBilling}
          hasRadar={showRadar}
@@ -512,7 +490,6 @@ export const DeviceSimulationLayer = ({ activeProducts }: DeviceSimulationLayerP
          targetY={terminalTargetY}
          width={DEVICE_WIDTH}
          isVisible={showTerminal}
-         hasRipple={showRadar}
          isBoosted={showAuthBoost}
          hasBilling={showBilling}
          hasRadar={showRadar}
