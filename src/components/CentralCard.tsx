@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MetricSlot } from './slots/MetricSlot';
 import { GraphVisualizer } from './slots/GraphVisualizer';
@@ -16,9 +16,26 @@ export const CentralCard = ({ activeProducts }: CentralCardProps) => {
   const [revenue, setRevenue] = useState(0);
   const [data, setData] = useState<number[]>([]);
   const [isWakingUp, setIsWakingUp] = useState(false);
+  const [trend, setTrend] = useState("+4.2%");
+  
+  const prevActiveCount = useRef(0);
   
   const isActive = activeProducts.includes('payments');
   
+  // Spike Effect when adding products
+  useEffect(() => {
+    if (isActive && activeProducts.length > prevActiveCount.current && prevActiveCount.current > 0) {
+       // Spike between 5% and 20%
+       const spikePercent = 0.05 + Math.random() * 0.15; 
+       setRevenue(prev => prev * (1 + spikePercent));
+       
+       // Ensure new trend is at least higher than default (which is 4.2%, so 5% is fine)
+       // We'll just display the spike growth as the new "current trend" or similar metric
+       setTrend(`+${(spikePercent * 100).toFixed(1)}%`);
+    }
+    prevActiveCount.current = activeProducts.length;
+  }, [activeProducts, isActive]);
+
   // Simulation Loop
   useEffect(() => {
     if (!isActive) {
@@ -26,6 +43,7 @@ export const CentralCard = ({ activeProducts }: CentralCardProps) => {
       setRevenue(0);
       setData([]);
       setIsWakingUp(false);
+      setTrend("+4.2%");
       return;
     }
 
@@ -164,7 +182,7 @@ export const CentralCard = ({ activeProducts }: CentralCardProps) => {
                  <MetricSlot 
                    label="NET VOLUME" 
                    value={formattedRevenue}
-                   trend="+32.8%"
+                   trend={trend}
                  />
                </motion.div>
              )}

@@ -1,5 +1,4 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Globe } from 'lucide-react';
 import { STAGE } from '@/config/products';
 
 interface GlobalPayoutsSimulationLayerProps {
@@ -108,8 +107,7 @@ export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulati
                     borderColor: 'rgba(17, 239, 227, 0.3)', // Teal at low opacity
                 }}
              >
-                 <div className="absolute top-4 right-4 flex items-center gap-1.5 text-xs font-semibold text-[#11EFE3] border border-cyan-100 px-2 py-1 rounded-full bg-white shadow-sm">
-                     <Globe className="w-3 h-3" />
+                 <div className="absolute top-4 right-4 flex items-center gap-1.5 text-xs font-semibold text-[#0073E6] border border-[#0073E6] px-2 py-1 rounded-full">
                      Global Payouts
                  </div>
              </motion.div>

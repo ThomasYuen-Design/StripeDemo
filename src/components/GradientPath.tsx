@@ -18,7 +18,7 @@ export const GradientPath = ({ d, gradientId }: GradientPathProps) => {
       {/* Rail - Subtle base */}
       <path
         d={d}
-        stroke="#cbd5e1"
+        stroke="#71767bff"
         strokeWidth="1"
         fill="none"
         strokeOpacity="0.2"

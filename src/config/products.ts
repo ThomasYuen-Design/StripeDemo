@@ -103,19 +103,19 @@ export const PRESETS: PresetConfig[] = [
     id: 'saas',
     label: 'SaaS Startup',
     icon: Zap,
-    products: ['payments', 'billing', 'radar'],
+    products: ['payments', 'billing', 'authorizationBoost', 'radar'],
   },
   {
     id: 'marketplace',
     label: 'Marketplace',
     icon: Globe,
-    products: ['connect', 'payments', 'identity', 'radar'],
+    products: ['payments', 'connect', 'radar'],
   },
   {
     id: 'creator',
     label: 'Creator Economy',
     icon: Activity,
-    products: ['payments', 'climate', 'billing'],
+    products: ['payments', 'connect', 'billing', 'globalPayouts'],
   },
 ];
 
