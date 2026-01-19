@@ -11,6 +11,8 @@ import { PRODUCTS, PRESETS, STAGE, getIconPosition } from '@/config/products';
 import { generateOrthogonalPath } from '@/utils/pathGeneration';
 import type { ProductId, PresetType } from '@/types';
 
+import StripeLogo from '@/assets/stripe-3.svg';
+
 export default function App() {
   const [activeProducts, setActiveProducts] = useState<ProductId[]>([]);
 
@@ -91,20 +93,20 @@ export default function App() {
 
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-stripe-purple selection:text-white flex flex-col overflow-hidden">
-      {/* Header */}
-      <header className="px-8 py-6 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-slate-200 z-50">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-stripe-purple rounded text-white flex items-center justify-center font-bold italic">
-            S
-          </div>
-          <span className="font-semibold text-slate-700 tracking-tight">
-            Integration Builder
-          </span>
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-stripe-purple selection:text-white flex flex-col overflow-hidden relative">
+      {/* Background Grid */}
+      <div className="absolute inset-0 pointer-events-none flex justify-center z-0">
+        <div className="w-full max-w-[1400px] h-full border-x border-slate-200 grid grid-cols-4">
+          <div className="border-r border-dashed border-slate-200"></div>
+          <div className="border-r border-dashed border-slate-200"></div>
+          <div className="border-r border-dashed border-slate-200"></div>
         </div>
-        <div className="text-sm font-medium text-slate-500">
-          <span className="text-stripe-purple">{activeProducts.length}</span>{' '}
-          Products Active
+      </div>
+
+      {/* Header */}
+      <header className="px-8 py-6 flex justify-between items-center border-b border-dashed border-slate-200 z-50">
+        <div className="flex items-center gap-3">
+          <img src={StripeLogo} alt="Stripe" className="h-7 w-auto" />
         </div>
       </header>
 

@@ -11,9 +11,7 @@ interface ConnectSimulationLayerProps {
 export const ConnectSimulationLayer = ({ isActive }: ConnectSimulationLayerProps) => {
 
 
-  // Position: To the right of the central card
-  // Card ends at center(700) + 300 = 1000.
-  // Connect Box starts at 1050?
+  // Position: Frame spans from 75% to 100% of stage (aligned with grid lines)
   const START_X = STAGE.cardCenterX + 300; 
   const CENTER_Y = 380; // Aligns box top (CENTER_Y - 140) with Card Top (240)
   
@@ -41,12 +39,12 @@ export const ConnectSimulationLayer = ({ isActive }: ConnectSimulationLayerProps
              {/* 1. The Container Box (Dashed) */}
             <motion.div
                initial={{ width: 0, opacity: 0 }}
-               animate={{ width: 320, opacity: 1 }}
+               animate={{ width: '25.1%', opacity: 1 }}
                exit={{ width: 0, opacity: 0 }}
                transition={{ duration: 0.6, ease: "easeOut" }}
                className="absolute border-2 border-dashed rounded-3xl bg-slate-50/50 input-events-auto"
                style={{
-                 left: START_X + 50, // Gap from card
+                 left: '74.9%', // Aligned with 4th vertical grid line (overlaps grey line)
                  top: CENTER_Y - 140,
                  height: 280,
                  borderColor: 'rgba(99, 91, 255, 0.3)', // Light blurple

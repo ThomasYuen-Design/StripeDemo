@@ -38,7 +38,7 @@ export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulati
   // Connect Section is roughly at X = Center + 350 (starts at 1050)
   // Connect Section ends roughly at Y = 710 (Top 310 + Height 400)
   
-  const SECTION_LEFT = STAGE.cardCenterX + 350; // Aligned with Connect
+  const SECTION_LEFT = (STAGE.width / 4) * 3; // 1050px - Aligned with grid line
   const SECTION_TOP = 536; // Just below Connect
   
   // Pipeline Routing (Bus Style)
@@ -102,9 +102,9 @@ export const GlobalPayoutsSimulationLayer = ({ isActive }: GlobalPayoutsSimulati
                 exit={{ opacity: 0, height: 0 }}
                 className="absolute border-2 border-dashed rounded-3xl bg-slate-50/50"
                 style={{
-                    left: SECTION_LEFT,
+                    left: '74.9%', // Aligned with 4th vertical grid line (overlaps grey line)
                     top: SECTION_TOP,
-                    width: 320, // Widened slightly to accommodate the shift
+                    width: '25.1%', // 25% of stage width to reach the right edge
                     borderColor: 'rgba(17, 239, 227, 0.3)', // Teal at low opacity
                 }}
              >
